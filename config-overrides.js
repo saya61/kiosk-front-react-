@@ -1,4 +1,4 @@
-const { override, devServer } = require('customize-cra');
+const { override, overrideDevServer } = require('customize-cra');
 
 const devServerConfig = () => config => {
     return {
@@ -11,5 +11,6 @@ const devServerConfig = () => config => {
 };
 
 module.exports = {
-    devServer: override(devServerConfig())
+    webpack: override(), // 기본 웹팩 설정을 그대로 사용
+    devServer: overrideDevServer(devServerConfig())
 };
