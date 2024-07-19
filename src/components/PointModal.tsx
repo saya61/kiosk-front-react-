@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Modal from 'react-modal';
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
@@ -30,6 +30,16 @@ const PointModal: React.FC<PointModalProps> = ({
         },
     };
 
+    useEffect(() => {
+        if (searchInput.length === 11) {
+            handleSearch();
+        }
+    }, [searchInput, handleSearch]);
+
+    const handleChange = (value: string) => {
+        setSearchInput(value);
+    };
+
     return (
         <Modal
             isOpen={isOpen}
@@ -39,21 +49,21 @@ const PointModal: React.FC<PointModalProps> = ({
             overlayClassName="custom-overlay"
         >
             <h2>적립 전화번호 검색</h2>
-            <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="전화번호 입력"
-            />
+            <div className="input-container">
+                <input
+                    type="text"
+                    value={searchInput}
+                    onChange={(e) => handleChange(e.target.value)}
+                    placeholder="전화번호 입력"
+                    className="custom-input"
+                />
+            </div>
             <Keyboard
                 layout={keyboardOptions.layout}
                 display={keyboardOptions.display}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 onKeyPress={() => {}}
             />
-            <button className="modal-search-button" onClick={handleSearch}>
-                검색
-            </button>
             <button className="modal-close-button" onClick={onRequestClose}>
                 닫기
             </button>

@@ -1,5 +1,5 @@
 // src/components/PasswordModal.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import Modal from 'react-modal';
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
@@ -39,6 +39,12 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
         },
     };
 
+    useEffect(() => {
+        if (password.length === 4) {
+            handlePasswordSubmit();
+        }
+    }, [password, handlePasswordSubmit]);
+
     const handleInputChange = (input: string) => {
         setPassword(input);
     };
@@ -47,20 +53,22 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
         <Modal
             isOpen={isOpen}
             onRequestClose={onRequestClose}
-            contentLabel="비밀번호 입력"
+            contentLabel="4자리 비밀번호 입력"
             className="custom-modal"
             overlayClassName="custom-overlay"
         >
             {isValid ? (
                 <div>
                     <h2>잔여 포인트: {points}</h2>
-                    <p>고객 전화번호: {storedPhoneNumber}</p> {/* 추가된 부분 */}
-                    <button className="modal-submit-button" onClick={() => { handleUsePoints(); onRequestClose(); }}>
-                        포인트 사용
-                    </button>
-                    <button className="modal-submit-button" onClick={() => { handleSkipPoints(); onRequestClose(); }}>
-                        포인트 사용 안함
-                    </button>
+                    <div className="phone-and-buttons">
+                        <p>고객 전화번호: {storedPhoneNumber}</p> {/* 추가된 부분 */}
+                        <button className="modal-submit-button" onClick={() => { handleUsePoints(); onRequestClose(); }}>
+                            포인트 사용
+                        </button>
+                        <button className="modal-submit-button" onClick={() => { handleSkipPoints(); onRequestClose(); }}>
+                            포인트 사용 안함
+                        </button>
+                    </div>
                 </div>
             ) : (
                 <div>
@@ -70,6 +78,7 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="비밀번호 입력"
+                        className="custom-input"
                     />
                     <Keyboard
                         layout={keyboardOptions.layout}
