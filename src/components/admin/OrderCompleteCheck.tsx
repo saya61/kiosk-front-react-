@@ -15,6 +15,7 @@ interface orderComplete {
     complete: boolean;
 }
 
+const API_URL = process.env.REACT_APP_API_URL;
 
 const OrderCompleteCheck = () => {
     const [orderCompleteList, setOrderCompleteList] =
@@ -23,7 +24,7 @@ const OrderCompleteCheck = () => {
     useEffect(() => {
         const fetchOrderCompleteList = async () => {
             try {
-                const result = await axios.get("http://localhost:8080/admin/orderComplete");
+                const result = await axios.get(`${API_URL}/admin/orderComplete`);
                 setOrderCompleteList(result.data);
             } catch (error) {
                 console.error(error);
