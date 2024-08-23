@@ -212,6 +212,14 @@ const PaymentPage: React.FC = () => {
                             orderUid: rsp.merchant_uid // 주문번호
                         });
                         try {
+                            await axios.post(`${API_URL}/api/orders/createOrderRequest`, {
+                                storeId: authContext?.storeInfo?.id,
+                                kioskId: authContext?.kioskInfo?.id,
+                                productId: selectedProducts.map(p => p.id).join(","),
+                                orderId: orderData.orderUid,
+                                payload: rsp.imp_uid
+                            });
+
                             // 결제 성공 시 주문 생성
                             const orderDTO = {
                                 customerId: authContext?.customerInfo?.id || 1,
@@ -222,12 +230,7 @@ const PaymentPage: React.FC = () => {
                                 paymentUid: rsp.imp_uid
                             };
 
-
-
                             const response = await axios.post(`${API_URL}/api/orders`, orderDTO);
-
-
-                            //
 
                             const orderItemDTOList = selectedProducts.map(product => {
                                 return {
@@ -244,8 +247,6 @@ const PaymentPage: React.FC = () => {
                                     `${API_URL}/api/orderitems`,
                                     orderItemDTOList[i]);
                             }
-
-                            //
 
                             console.log('서버 응답:', response.data);
                             alert('결제 완료!');
