@@ -1,5 +1,5 @@
 // src/components/PaymentPage.tsx
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import axios, { AxiosError } from 'axios';
 import { OrderModuleDTO, Product } from '../types';
 import { loadScript } from './LoadScript';
@@ -8,6 +8,7 @@ import { AuthContext } from '../context/AuthContext';
 import './PaymentPage.css';
 import PointModal from './PointModal';
 import PasswordModal from './PasswordModal';
+import Webcam from 'react-webcam';
 
 interface LocationState {
     orderData: OrderModuleDTO;
@@ -34,6 +35,10 @@ const PaymentPage: React.FC = () => {
     const [points, setPoints] = useState(0); // 포인트 상태 추가
     const authContext = useContext(AuthContext);
 
+    const [order, setOrder] = useState<any>(null);
+
+    const [capturedImage, setCapturedImage] = useState<string | null>(null);
+
     const API_URL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
@@ -46,9 +51,93 @@ const PaymentPage: React.FC = () => {
                 console.error(error);
             }
         };
+        if (capturedImage) {
+            // uploadImage();
+            humanRekognition();
+        }
 
         loadIamportScript();
-    }, []);
+    }, [capturedImage]);
+
+    const webcamRef= useRef<Webcam>(null);
+
+    const capture = useCallback(() => {
+        if (webcamRef.current) {
+            console.log("webcamRef is not null")
+            const imageSrc = webcamRef.current.getScreenshot();
+            setCapturedImage(imageSrc);
+            console.log("capturedImage: ", imageSrc);
+        }
+        else {
+            console.log("webcamRef is null")
+        }
+    }, [webcamRef]);
+
+    // const uploadImage = async () => {
+    //     if (capturedImage) {
+    //         console.log("there is captured image");
+    //         const response = await fetch(capturedImage);
+    //         const blob = await response.blob();
+    //
+    //         let now = new Date();
+    //         let thistime = now.getTime();
+    //         let fileName = thistime.toString() + ".jpg";
+    //
+    //         const file = new File([blob], fileName, { type: "image/jpeg" });
+    //
+    //         const formData = new FormData();
+    //         formData.append("file", file);
+    //
+    //         try {
+    //             const uploadResponse = axios.post(`${API_URL}/test/upload_test`, formData, {
+    //                 headers: {
+    //                     "Content-Type": "multipart/form-data",
+    //                 },
+    //             });
+    //         } catch (error) {
+    //             console.error("Failed to upload image", error);
+    //         }
+    //     } else {
+    //         console.log("there is no captured image");
+    //     }
+    // };
+
+    const humanRekognition = async () => {
+        if (capturedImage) {
+            console.log("there is captured image");
+            const response = await fetch(capturedImage);
+            const blob = await response.blob();
+
+            let now = new Date();
+            let thistime = now.getTime();
+            let fileName = thistime.toString() + ".jpg";
+
+            const file = new File([blob], fileName, { type: "image/jpeg" });
+
+            const formData = new FormData();
+            formData.append("image", file);
+            formData.append("order", new Blob([JSON.stringify(order)], {type: "application/json"}));
+            console.log("order: ", order);
+            try {
+                const uploadResponse = axios.post(`${API_URL}/human-rekognition/image`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+            } catch (error) {
+                console.error("Failed to upload image", error);
+            }
+        }
+    }
+
+    // const captureAndUpload = () => {
+    //     capture();
+    // }
+
+    const humanRekognitionAndUpload = () => {
+        capture();
+    }
+
 
     const handlePackagedClick = (isPackaged: boolean) => {
         setIsPackaged(isPackaged);
@@ -219,7 +308,6 @@ const PaymentPage: React.FC = () => {
                                 orderId: orderData.orderUid,
                                 payload: rsp.imp_uid
                             });
-
                             // 결제 성공 시 주문 생성
                             const orderDTO = {
                                 customerId: authContext?.customerInfo?.id || 1,
@@ -231,6 +319,9 @@ const PaymentPage: React.FC = () => {
                             };
 
                             const response = await axios.post(`${API_URL}/api/orders`, orderDTO);
+                            //response가 order임
+                            await setOrder(response.data);
+                            await humanRekognitionAndUpload();
 
                             const orderItemDTOList = selectedProducts.map(product => {
                                 return {
@@ -361,6 +452,15 @@ const PaymentPage: React.FC = () => {
                     결제하기
                 </button>
             </footer>
+
+            <div style={{position: 'absolute', zIndex: -1, width: '1px', height: '1px', overflow: 'hidden'}}>
+                <Webcam
+                    audio={false}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                />
+            </div>
+
             <PointModal
                 isOpen={isPointModalOpen}
                 onRequestClose={handlePointModalClose}
