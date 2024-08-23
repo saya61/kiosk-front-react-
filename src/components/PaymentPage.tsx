@@ -35,6 +35,8 @@ const PaymentPage: React.FC = () => {
     const [points, setPoints] = useState(0); // 포인트 상태 추가
     const authContext = useContext(AuthContext);
 
+    const [order, setOrder] = useState<any>(null);
+
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
     const API_URL = process.env.REACT_APP_API_URL;
@@ -50,11 +52,12 @@ const PaymentPage: React.FC = () => {
             }
         };
         if (capturedImage) {
-            uploadImage();
+            // uploadImage();
+            humanRekognition();
         }
 
         loadIamportScript();
-    }, [catpuredImage]);
+    }, [capturedImage]);
 
     const webcamRef= useRef<Webcam>(null);
 
@@ -70,7 +73,36 @@ const PaymentPage: React.FC = () => {
         }
     }, [webcamRef]);
 
-    const uploadImage = async () => {
+    // const uploadImage = async () => {
+    //     if (capturedImage) {
+    //         console.log("there is captured image");
+    //         const response = await fetch(capturedImage);
+    //         const blob = await response.blob();
+    //
+    //         let now = new Date();
+    //         let thistime = now.getTime();
+    //         let fileName = thistime.toString() + ".jpg";
+    //
+    //         const file = new File([blob], fileName, { type: "image/jpeg" });
+    //
+    //         const formData = new FormData();
+    //         formData.append("file", file);
+    //
+    //         try {
+    //             const uploadResponse = axios.post(`${API_URL}/test/upload_test`, formData, {
+    //                 headers: {
+    //                     "Content-Type": "multipart/form-data",
+    //                 },
+    //             });
+    //         } catch (error) {
+    //             console.error("Failed to upload image", error);
+    //         }
+    //     } else {
+    //         console.log("there is no captured image");
+    //     }
+    // };
+
+    const humanRekognition = async () => {
         if (capturedImage) {
             console.log("there is captured image");
             const response = await fetch(capturedImage);
@@ -83,10 +115,11 @@ const PaymentPage: React.FC = () => {
             const file = new File([blob], fileName, { type: "image/jpeg" });
 
             const formData = new FormData();
-            formData.append("file", file);
-
+            formData.append("image", file);
+            formData.append("order", new Blob([JSON.stringify(order)], {type: "application/json"}));
+            console.log("order: ", order);
             try {
-                const uploadResponse = axios.post(`${API_URL}/test/upload_test`, formData, {
+                const uploadResponse = axios.post(`${API_URL}/human-rekognition/image`, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
@@ -94,16 +127,16 @@ const PaymentPage: React.FC = () => {
             } catch (error) {
                 console.error("Failed to upload image", error);
             }
-        } else {
-            console.log("there is no captured image");
         }
-    };
-
-    const captureAndUpload = () => {
-        capture();
     }
 
+    // const captureAndUpload = () => {
+    //     capture();
+    // }
 
+    const humanRekognitionAndUpload = () => {
+        capture();
+    }
 
 
     const handlePackagedClick = (isPackaged: boolean) => {
@@ -269,7 +302,7 @@ const PaymentPage: React.FC = () => {
                         });
                         try {
 
-                            captureAndUpload();
+                            // captureAndUpload();
 
                             // 결제 성공 시 주문 생성
                             const orderDTO = {
@@ -284,6 +317,9 @@ const PaymentPage: React.FC = () => {
 
 
                             const response = await axios.post(`${API_URL}/api/orders`, orderDTO);
+                            //response가 order임
+                            await setOrder(response.data);
+                            await humanRekognitionAndUpload();
 
 
                             //
