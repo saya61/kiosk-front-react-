@@ -8,16 +8,14 @@ spec:
   replicas: {{ .Values.replicaCount }}  # values.yaml에서 설정된 복제본 수
   selector:
     matchLabels:
-      app
-
-  : {{ .Chart.Name }}  # Pod을 선택할 레이블
-template:
-  metadata:
-    labels:
-      app: {{ .Chart.Name }}  # Pod에 부착할 레이블
-  spec:
-    containers:
-      - name: {{ .Chart.Name }}  # 컨테이너 이름
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # 이미지 레포지토리 및 태그
-        ports:
-          - containerPort: 3000  # 컨테이너에서 노출할 포트
+      app: {{ .Chart.Name }}  # Pod을 선택할 레이블
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}  # Pod에 부착할 레이블
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}  # 컨테이너 이름
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # 이미지 레포지토리 및 태그
+          ports:
+            - containerPort: 3000  # 컨테이너에서 노출할 포트

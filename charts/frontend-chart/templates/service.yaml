@@ -1,13 +1,21 @@
-apiVersion: v1  # Kubernetes API 버전
-kind: Service  # 리소스의 종류
+apiVersion: apps/v1  # Kubernetes API 버전
+kind: Deployment  # 리소스의 종류
 metadata:
-  name: {{ .Release.Name }}-frontend  # 릴리스 이름을 접두사로 사용한 Service 이름
+  name: {{ .Release.Name }}-frontend  # 릴리스 이름을 접두사로 사용한 Deployment 이름
   labels:
     app: {{ .Chart.Name }}  # Chart 이름을 사용한 레이블
 spec:
-  type: {{ .Values.service.type }}  # values.yaml에서 설정된 서비스 타입
-  ports:
-    - port: {{ .Values.service.port }}  # 외부 노출 포트
-      targetPort: 3000  # 컨테이너 포트
+  replicas: {{ .Values.replicaCount }}  # values.yaml에서 설정된 복제본 수
   selector:
-    app: {{ .Chart.Name }}  # 트래픽을 전달할 Pod 선택
+    matchLabels:
+      app: {{ .Chart.Name }}  # Pod을 선택할 레이블
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}  # Pod에 부착할 레이블
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}  # 컨테이너 이름
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # 이미지 레포지토리 및 태그
+          ports:
+            - containerPort: 3000  # 컨테이너에서 노출할 포트
