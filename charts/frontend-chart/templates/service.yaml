@@ -1,21 +1,13 @@
-apiVersion: apps/v1  # Kubernetes API 버전
-kind: Deployment  # 리소스의 종류
+apiVersion: v1  # Kubernetes API 버전, Service를 생성할 때 사용
+kind: Service  # 리소스의 종류, 여기서는 Service를 정의
 metadata:
-  name: {{ .Release.Name }}-frontend  # 릴리스 이름을 접두사로 사용한 Deployment 이름
+  name: frontend-service  # Service의 이름, Kubernetes 내에서 이 이름으로 식별
   labels:
-    app: {{ .Chart.Name }}  # Chart 이름을 사용한 레이블
+    app: kiosk-frontend  # 이 리소스에 붙일 레이블, 앱을 구분하는 데 사용
 spec:
-  replicas: {{ .Values.replicaCount }}  # values.yaml에서 설정된 복제본 수
+  type: LoadBalancer  # Service 타입, 외부 트래픽을 처리할 로드밸런서를 생성
   selector:
-    matchLabels:
-      app: {{ .Chart.Name }}  # Pod을 선택할 레이블
-  template:
-    metadata:
-      labels:
-        app: {{ .Chart.Name }}  # Pod에 부착할 레이블
-    spec:
-      containers:
-        - name: {{ .Chart.Name }}  # 컨테이너 이름
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # 이미지 레포지토리 및 태그
-          ports:
-            - containerPort: 3000  # 컨테이너에서 노출할 포트
+    app: kiosk-frontend  # 이 레이블을 가진 Pod으로 트래픽을 전달
+  ports:
+    - port: 80  # Service가 외부에 노출할 포트, 클라이언트는 이 포트로 접근
+      targetPort: 3000  # Pod 내 컨테이너가 수신할 포트, 컨테이너의 포트
