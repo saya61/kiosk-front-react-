@@ -41,8 +41,8 @@ const RefundManagement: React.FC = () => {
                     "Access-Control-Allow-Origin": "*"
                 },
                 data: {
-                    "imp_key": "3138755861825685",
-                    "imp_secret": "r8nLkhIcnS0ml1IUnbWIDRklNnoUWMpMmsjQmeU7jbfAlDrnKEjKSZ5vaxGajaKRLMx8N2eH7C9ujrtL"
+                    "imp_key": "",
+                    "imp_secret": ""
                 }
             })
             .then((response) => console.log(response))
