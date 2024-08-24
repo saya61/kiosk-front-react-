@@ -318,7 +318,13 @@ const PaymentPage: React.FC = () => {
                                 paymentUid: rsp.imp_uid
                             };
 
-                            const response = await axios.post(`${API_URL}/api/orders`, orderDTO);
+                            //const response = await axios.post(`${API_URL}/api/orders`, orderDTO);
+                            // 새로고침한 뒤에 문제 생김 (해결)
+                            const response = await axios.post(`${API_URL}/api/orders`, orderDTO, {
+                                headers: {
+                                    'Authorization': `Bearer ${localStorage.getItem('token')}` // Authorization 헤더 추가
+                                }
+                            });
                             //response가 order임
                             await setOrder(response.data);
                             await humanRekognitionAndUpload();

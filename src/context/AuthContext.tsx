@@ -21,6 +21,11 @@ interface Customer {
     address: string;
 }
 
+interface Token{
+    accessToken: string;
+    tokenType: string;
+}
+
 interface AuthContextType {
     isAuthenticated: boolean;
     login: (token: string) => void;

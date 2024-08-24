@@ -56,6 +56,8 @@ const KioskSelectionPage: React.FC = () => {
         const fetchKiosks = async () => {
             try {
                 const adminId = localStorage.getItem('adminId');
+                const token = localStorage.getItem('token')
+                console.log(token);
                 console.log('adminId:', adminId);
                 if (!adminId) {
                     console.error('No adminId found in localStorage');
