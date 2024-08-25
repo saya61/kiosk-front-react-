@@ -1,4 +1,3 @@
-// src/components/PaymentPage.tsx
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import axios, { AxiosError } from 'axios';
 import { OrderModuleDTO, Product } from '../types';
@@ -6,9 +5,27 @@ import { loadScript } from './LoadScript';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import './PaymentPage.css';
+import { lightTheme } from '../themes';
+import {
+    PaymentPageWrapper,
+    PaymentHeader,
+    PaymentContent,
+    OrderList,
+    OptionBox,
+    PaymentOptions,
+    Button,
+    PaymentFooter,
+    TotalAmount,
+    PaymentButton,
+    ProductItem,
+    GoBackButton, ProductInfo,PageButton,PaginationWrapper
+} from './style/PaymentPageStyles';
 import PointModal from './PointModal';
 import PasswordModal from './PasswordModal';
 import Webcam from 'react-webcam';
+
+
+
 
 interface LocationState {
     orderData: OrderModuleDTO;
@@ -19,8 +36,13 @@ const PaymentPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const state = location.state as LocationState;
-    const { orderData, selectedProducts } = state;
-    const [finalTotalPrice, setFinalTotalPrice] = useState(orderData.price); // 초기 상태 설정
+    const { orderData, selectedProducts: initialSelectedProducts } = state;
+
+    const [selectedProducts, setSelectedProducts] = useState<Product[]>(initialSelectedProducts);
+    const [finalTotalPrice, setFinalTotalPrice] = useState(orderData.price);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 4;
 
     const [isScriptLoaded, setIsScriptLoaded] = useState(false);
     const [isPackaged, setIsPackaged] = useState<boolean | undefined>(undefined);
@@ -28,15 +50,14 @@ const PaymentPage: React.FC = () => {
     const [isPointModalOpen, setIsPointModalOpen] = useState(false);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [searchInput, setSearchInput] = useState('');
-    const [storedPhoneNumber, setStoredPhoneNumber] = useState(''); // 전화번호 저장 변수 추가
+    const [storedPhoneNumber, setStoredPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [existingCustomer, setExistingCustomer] = useState(false);
-    const [isValid, setIsValid] = useState(false); // 비밀번호 유효성 상태 추가
-    const [points, setPoints] = useState(0); // 포인트 상태 추가
+    const [isValid, setIsValid] = useState(false);
+    const [points, setPoints] = useState(0);
     const authContext = useContext(AuthContext);
 
     const [order, setOrder] = useState<any>(null);
-
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
     const API_URL = process.env.REACT_APP_API_URL;
@@ -52,59 +73,23 @@ const PaymentPage: React.FC = () => {
             }
         };
         if (capturedImage) {
-            // uploadImage();
             humanRekognition();
         }
 
         loadIamportScript();
     }, [capturedImage]);
 
-    const webcamRef= useRef<Webcam>(null);
+    const webcamRef = useRef<Webcam>(null);
 
     const capture = useCallback(() => {
         if (webcamRef.current) {
-            console.log("webcamRef is not null")
             const imageSrc = webcamRef.current.getScreenshot();
             setCapturedImage(imageSrc);
-            console.log("capturedImage: ", imageSrc);
-        }
-        else {
-            console.log("webcamRef is null")
         }
     }, [webcamRef]);
 
-    // const uploadImage = async () => {
-    //     if (capturedImage) {
-    //         console.log("there is captured image");
-    //         const response = await fetch(capturedImage);
-    //         const blob = await response.blob();
-    //
-    //         let now = new Date();
-    //         let thistime = now.getTime();
-    //         let fileName = thistime.toString() + ".jpg";
-    //
-    //         const file = new File([blob], fileName, { type: "image/jpeg" });
-    //
-    //         const formData = new FormData();
-    //         formData.append("file", file);
-    //
-    //         try {
-    //             const uploadResponse = axios.post(`${API_URL}/test/upload_test`, formData, {
-    //                 headers: {
-    //                     "Content-Type": "multipart/form-data",
-    //                 },
-    //             });
-    //         } catch (error) {
-    //             console.error("Failed to upload image", error);
-    //         }
-    //     } else {
-    //         console.log("there is no captured image");
-    //     }
-    // };
-
     const humanRekognition = async () => {
         if (capturedImage) {
-            console.log("there is captured image");
             const response = await fetch(capturedImage);
             const blob = await response.blob();
 
@@ -116,10 +101,10 @@ const PaymentPage: React.FC = () => {
 
             const formData = new FormData();
             formData.append("image", file);
-            formData.append("order", new Blob([JSON.stringify(order)], {type: "application/json"}));
-            console.log("order: ", order);
+            formData.append("order", new Blob([JSON.stringify(order)], { type: "application/json" }));
+
             try {
-                const uploadResponse = axios.post(`${API_URL}/human-rekognition/image`, formData, {
+                await axios.post(`${API_URL}/human-rekognition/image`, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
@@ -128,16 +113,11 @@ const PaymentPage: React.FC = () => {
                 console.error("Failed to upload image", error);
             }
         }
-    }
-
-    // const captureAndUpload = () => {
-    //     capture();
-    // }
+    };
 
     const humanRekognitionAndUpload = () => {
         capture();
-    }
-
+    };
 
     const handlePackagedClick = (isPackaged: boolean) => {
         setIsPackaged(isPackaged);
@@ -149,7 +129,7 @@ const PaymentPage: React.FC = () => {
 
     const handlePointModalClose = () => {
         setIsPointModalOpen(false);
-        setSearchInput(''); // 모달이 닫힐 때 입력 필드 초기화
+        setSearchInput('');
     };
 
     const handlePasswordModalOpen = () => {
@@ -158,24 +138,21 @@ const PaymentPage: React.FC = () => {
 
     const handlePasswordModalClose = () => {
         setIsPasswordModalOpen(false);
-        setPassword(''); // 모달이 닫힐 때 비밀번호 필드 초기화
-        setIsValid(false); // 모달이 닫힐 때 유효성 상태 초기화
-        setStoredPhoneNumber(''); // 모달이 닫힐 때 저장된 전화번호 초기화
-        setExistingCustomer(false); // 모달이 닫힐 때 기존 고객 여부 초기화
+        setPassword('');
+        setIsValid(false);
+        setStoredPhoneNumber('');
+        setExistingCustomer(false);
     };
 
     const handleSearch = async () => {
-        console.log(searchInput); // 입력된 전화번호를 콘솔에 출력
-        setStoredPhoneNumber(searchInput); // 검색한 전화번호를 저장
+        setStoredPhoneNumber(searchInput);
         try {
             const response = await axios.get(`${API_URL}/api/customer/${searchInput}`);
             if (response.status === 200) {
-                // 전화번호가 이미 존재하면 비밀번호 입력 모달 열기
                 setExistingCustomer(true);
                 handlePointModalClose();
                 handlePasswordModalOpen();
             } else if (response.status === 404) {
-                // 전화번호가 존재하지 않으면 비밀번호 설정 모달 열기
                 setExistingCustomer(false);
                 handlePointModalClose();
                 handlePasswordModalOpen();
@@ -184,7 +161,6 @@ const PaymentPage: React.FC = () => {
             if (axios.isAxiosError(error)) {
                 const axiosError = error as AxiosError;
                 if (axiosError.response && axiosError.response.status === 404) {
-                    // 전화번호가 존재하지 않으면 비밀번호 설정 모달 열기
                     setExistingCustomer(false);
                     handlePointModalClose();
                     handlePasswordModalOpen();
@@ -198,7 +174,6 @@ const PaymentPage: React.FC = () => {
     };
 
     const handlePasswordSubmit = async () => {
-        console.log(storedPhoneNumber); // 저장된 전화번호를 콘솔에 출력
         if (existingCustomer) {
             try {
                 const response = await axios.post(`${API_URL}/api/customer/validatePassword`, {
@@ -216,7 +191,7 @@ const PaymentPage: React.FC = () => {
                         email: response.data.customer.email,
                         address: response.data.customer.address
                     });
-                    authContext?.setUsePointSwitch(true); // usePointSwitch 설정
+                    authContext?.setUsePointSwitch(true);
                 } else {
                     alert('비밀번호가 유효하지 않습니다.');
                 }
@@ -225,13 +200,11 @@ const PaymentPage: React.FC = () => {
                 alert('포인트 확인에 실패했습니다.');
             }
         } else {
-            // 새 고객 등록 및 비밀번호 설정 로직
             try {
                 const response = await axios.post(`${API_URL}/api/customer/register`, {
                     phoneNumber: storedPhoneNumber,
                     password: password
                 });
-                console.log('Response data:', response.data); // 디버깅
                 alert('고객이 등록되었습니다!');
                 authContext?.setCustomerInfo({
                     id: response.data.id,
@@ -241,7 +214,7 @@ const PaymentPage: React.FC = () => {
                     email: response.data.email,
                     address: response.data.address
                 });
-                authContext?.setUsePointSwitch(true); // usePointSwitch 설정
+                authContext?.setUsePointSwitch(true);
                 handlePasswordModalClose();
             } catch (error) {
                 console.error(error);
@@ -253,19 +226,15 @@ const PaymentPage: React.FC = () => {
     };
 
     const handleUsePoints = () => {
-        // 포인트 사용 로직 추가
-        const pointsToUse = points; // 사용하려는 포인트 양
+        const pointsToUse = points;
         const newTotalPrice = orderData.price - pointsToUse;
-        setFinalTotalPrice(newTotalPrice < 0 ? 0 : newTotalPrice); // 최종 결제 금액 업데이트
-        handlePasswordModalClose(); // 모달 닫기
-        console.log('포인트 사용');
+        setFinalTotalPrice(newTotalPrice < 0 ? 0 : newTotalPrice);
+        handlePasswordModalClose();
     };
 
     const handleSkipPoints = () => {
-        // 포인트 사용하지 않음 로직 추가
-        setFinalTotalPrice(orderData.price); // 최종 결제 금액을 원래대로
-        handlePasswordModalClose(); // 모달 닫기
-        console.log('포인트 사용 안함');
+        setFinalTotalPrice(orderData.price);
+        handlePasswordModalClose();
     };
 
     const requestPay = () => {
@@ -277,28 +246,27 @@ const PaymentPage: React.FC = () => {
 
         if (window.IMP) {
             const { IMP } = window;
-            IMP.init('imp55148327'); // 가맹점 식별코드
+            IMP.init('imp55148327');
 
             IMP.request_pay(
                 {
                     pg: 'html5_inicis.INIpayTest',
                     pay_method: 'card',
-                    merchant_uid: orderData.orderUid, // 주문 번호
-                    name: orderData.storeName, // 상품 이름
-                    amount: finalTotalPrice, // 최종 결제 금액
-                    buyer_email: orderData.email, // 구매자 이메일
-                    buyer_name: orderData.storeName, // 구매자 이름
-                    buyer_tel: '010-1234-5678', // 임의의 값
-                    buyer_addr: orderData.address, // 구매자 주소
-                    buyer_postcode: '123-456', // 임의의 값
+                    merchant_uid: orderData.orderUid,
+                    name: orderData.storeName,
+                    amount: finalTotalPrice,
+                    buyer_email: orderData.email,
+                    buyer_name: orderData.storeName,
+                    buyer_tel: '010-1234-5678',
+                    buyer_addr: orderData.address,
+                    buyer_postcode: '123-456',
                 },
                 async (rsp: any) => {
                     if (rsp.success) {
-                        console.log('결제 성공:', rsp);
                         await axios.post(`${API_URL}/api/orders/iamPortDto`, {
                             price: orderData.price,
-                            paymentUid: rsp.imp_uid, // 결제 고유번호
-                            orderUid: rsp.merchant_uid // 주문번호
+                            paymentUid: rsp.imp_uid,
+                            orderUid: rsp.merchant_uid
                         });
                         try {
                             await axios.post(`${API_URL}/api/orders/createOrderRequest`, {
@@ -308,71 +276,40 @@ const PaymentPage: React.FC = () => {
                                 orderId: orderData.orderUid,
                                 payload: rsp.imp_uid
                             });
-                            // 결제 성공 시 주문 생성
+
                             const orderDTO = {
                                 customerId: authContext?.customerInfo?.id || 1,
                                 kioskId: authContext?.kioskInfo?.id,
                                 datetime: new Date(),
                                 totalPrice: orderData.price,
-                                packaged: isPackaged, // 포장 여부 설정
+                                packaged: isPackaged,
                                 paymentUid: rsp.imp_uid
                             };
 
-                            //const response = await axios.post(`${API_URL}/api/orders`, orderDTO);
-                            // 새로고침한 뒤에 문제 생김 (해결)
                             const response = await axios.post(`${API_URL}/api/orders`, orderDTO, {
                                 headers: {
-                                    'Authorization': `Bearer ${localStorage.getItem('token')}` // Authorization 헤더 추가
+                                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                                 }
                             });
-                            //response가 order임
-                            await setOrder(response.data);
+                            setOrder(response.data);
                             await humanRekognitionAndUpload();
 
                             const orderItemDTOList = selectedProducts.map(product => {
                                 return {
                                     paymentUid: orderDTO.paymentUid,
                                     menuId: product.id,
-                                    // customOptions: product.options,
                                     quantity: product.quantity,
                                     price: product.price
                                 }
                             });
 
                             for (let i = 0; i < orderItemDTOList.length; i++) {
-                                const response2 = await axios.post(
-                                    `${API_URL}/api/orderitems`,
-                                    orderItemDTOList[i]);
+                                await axios.post(`${API_URL}/api/orderitems`, orderItemDTOList[i]);
                             }
 
-                            console.log('서버 응답:', response.data);
                             alert('결제 완료!');
-
-                            // 포인트 사용 및 적립 로직
-                            if (authContext?.customerInfo) {
-                                if (authContext.usePointSwitch) {
-                                    // 포인트 사용 로직
-                                    await axios.post(`${API_URL}/api/customer/usePoints`, {
-                                        phoneNumber: authContext.customerInfo.phoneNumber,
-                                        totalPrice: orderData.price,
-                                        pointsToUse: points
-                                    });
-                                    console.log('포인트가 사용되었습니다.');
-                                }
-
-                                // 포인트 적립 로직
-                                const pointsToAdd = Math.floor(orderData.price * 0.01);
-                                await axios.post(`${API_URL}/api/customer/addPoints`, {
-                                    phoneNumber: authContext.customerInfo.phoneNumber,
-                                    totalPrice: orderData.price,
-                                    pointsToUse: 0 // 적립할 때는 사용 포인트는 0으로 설정
-                                });
-                                console.log('포인트가 적립되었습니다.');
-                            } else {
-                                console.log('비회원 결제');
-                            }
-
-                            navigate('/guard'); // 결제 완료 후 홈으로 이동
+                            setSelectedProducts([]);
+                            navigate('/guard');
                         } catch (error) {
                             console.error('주문 생성 실패:', error);
                             alert('주문 생성 실패!');
@@ -402,11 +339,11 @@ const PaymentPage: React.FC = () => {
             kiosk: {
                 id: authContext?.kioskInfo?.id,
                 number: authContext?.kioskInfo?.number,
-                store: { storeID: authContext?.storeInfo?.id } // Store 객체를 적절히 설정해야 함
+                store: { storeID: authContext?.storeInfo?.id }
             },
             dateTime: new Date(),
             totalPrice: finalTotalPrice,
-            isPackaged: isPackaged // 포장 여부 설정
+            isPackaged: isPackaged
         };
         console.log('생성될 주문 객체:', order);
     };
@@ -415,51 +352,91 @@ const PaymentPage: React.FC = () => {
         setSearchInput(input);
     };
 
+    const handleGoBack = () => {
+        navigate('/menu', { state: { selectedProducts } });
+    };
+
+    // 페이징 로직
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = selectedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+
+    const handleNextPage = () => {
+        if (currentPage < Math.ceil(selectedProducts.length / productsPerPage)) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
     return (
-        <div className="payment-page">
-            <header className="payment-header">주문목록</header>
-            <div className="payment-content">
-                <div className="order-list">
-                    {selectedProducts.map(product => (
-                        <div key={product.id} className="product-item">
+        <PaymentPageWrapper>
+            <PaymentHeader>
+                <GoBackButton onClick={handleGoBack}>뒤로가기</GoBackButton>주문목록
+            </PaymentHeader>
+            <PaymentContent>
+                <OrderList>
+                    {currentProducts.map(product => (
+                        <ProductItem key={product.id}>
+                            <ProductInfo>
                             <h3>{product.name}</h3>
                             <p>가격: {product.price}원</p>
                             <p>수량: {product.quantity}</p>
-                            {product.options.map(option => (
-                                <p key={option.id}>옵션: {option.name} (+{option.additionalPrice}원)</p>
-                            ))}
-                        </div>
+                            </ProductInfo>
+                            <OptionBox>
+                                {product.options.map(option => (
+                                    <p key={option.id}>옵션: {option.name} (+{option.additionalPrice}원)</p>
+                                ))}
+                            </OptionBox>
+                        </ProductItem>
                     ))}
-                </div>
-                <div className="payment-options">
-                    <button
-                        className={`payment-button ${isPackaged === false ? 'selected' : ''} ${highlightButtons && isPackaged === undefined ? 'highlight' : ''}`}
+                </OrderList>
+                <PaymentOptions>
+                    <Button
+                        selected={isPackaged === false}
                         onClick={() => handlePackagedClick(false)}
+                        highlight={highlightButtons && isPackaged === undefined}
                     >
                         먹고가기
-                    </button>
-                    <button
-                        className={`payment-button ${isPackaged === true ? 'selected' : ''} ${highlightButtons && isPackaged === undefined ? 'highlight' : ''}`}
+                    </Button>
+                    <Button
+                        selected={isPackaged === true}
                         onClick={() => handlePackagedClick(true)}
+                        highlight={highlightButtons && isPackaged === undefined}
                     >
                         포장하기
-                    </button>
-                    <button className="payment-button" onClick={handlePointModalOpen}>
+                    </Button>
+                    <Button onClick={handlePointModalOpen}>
                         포인트 적립 및 사용
-                    </button>
-                    <button className="payment-button" onClick={handleTestButtonClick}>
+                    </Button>
+                    <Button onClick={handleTestButtonClick}>
                         테스트
-                    </button>
-                </div>
-            </div>
-            <footer className="payment-footer">
-                <div className="total-amount">결제 금액: {finalTotalPrice}원</div>
-                <button className="payment-button" onClick={requestPay} disabled={!isScriptLoaded}>
-                    결제하기
-                </button>
-            </footer>
+                    </Button>
+                </PaymentOptions>
+            </PaymentContent>
 
-            <div style={{position: 'absolute', zIndex: -1, width: '1px', height: '1px', overflow: 'hidden'}}>
+            <PaginationWrapper>
+                <PageButton onClick={handlePreviousPage} disabled={currentPage === 1}>
+                    이전
+                </PageButton>
+                <span>{currentPage} / {Math.ceil(selectedProducts.length / productsPerPage)}</span>
+                <PageButton onClick={handleNextPage} disabled={currentPage === Math.ceil(selectedProducts.length / productsPerPage)}>
+                    다음
+                </PageButton>
+            </PaginationWrapper>
+
+            <PaymentFooter>
+                <TotalAmount>결제 금액: {finalTotalPrice}원</TotalAmount>
+                <PaymentButton onClick={requestPay} disabled={!isScriptLoaded}>
+                    결제하기
+                </PaymentButton>
+            </PaymentFooter>
+
+            <div style={{ position: 'absolute', zIndex: -1, width: '1px', height: '1px', overflow: 'hidden' }}>
                 <Webcam
                     audio={false}
                     ref={webcamRef}
@@ -485,11 +462,10 @@ const PaymentPage: React.FC = () => {
                 points={points}
                 handleUsePoints={handleUsePoints}
                 handleSkipPoints={handleSkipPoints}
-                storedPhoneNumber={storedPhoneNumber} // 추가된 부분
+                storedPhoneNumber={storedPhoneNumber}
             />
-        </div>
+        </PaymentPageWrapper>
     );
 };
 
 export default PaymentPage;
-

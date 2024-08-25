@@ -12,7 +12,11 @@ export const lightTheme = {
     checkoutColor: 'white',
     checkoutHoverBgColor: '#333',
     bodyBgColor: '#ffffff',
-    bodyColor: '#000000'
+    bodyColor: '#000000',
+    buttonBgColor: '#ff844d',
+    buttonHoverBgColor: '#ffb1a0',
+    highlightBgColor: '#ffd489',
+    highlightColor: '#beff5a'
 };
 
 export const highContrastTheme = {
