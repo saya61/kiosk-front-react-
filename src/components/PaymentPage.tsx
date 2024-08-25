@@ -39,7 +39,7 @@ const PaymentPage: React.FC = () => {
     const { orderData, selectedProducts: initialSelectedProducts } = state;
 
     const [selectedProducts, setSelectedProducts] = useState<Product[]>(initialSelectedProducts);
-    const [finalTotalPrice, setFinalTotalPrice] = useState(orderData.price);
+    const [finalTotalPrice, setFinalTotalPrice] = useState(orderData.price);// 초기 상태 설정
 
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 4;
@@ -50,11 +50,11 @@ const PaymentPage: React.FC = () => {
     const [isPointModalOpen, setIsPointModalOpen] = useState(false);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [searchInput, setSearchInput] = useState('');
-    const [storedPhoneNumber, setStoredPhoneNumber] = useState('');
+    const [storedPhoneNumber, setStoredPhoneNumber] = useState('');// 전화번호 저장 변수 추가
     const [password, setPassword] = useState('');
     const [existingCustomer, setExistingCustomer] = useState(false);
-    const [isValid, setIsValid] = useState(false);
-    const [points, setPoints] = useState(0);
+    const [isValid, setIsValid] = useState(false);// 비밀번호 유효성 상태 추가
+    const [points, setPoints] = useState(0);// 포인트 상태 추가
     const authContext = useContext(AuthContext);
 
     const [order, setOrder] = useState<any>(null);
@@ -80,6 +80,34 @@ const PaymentPage: React.FC = () => {
     }, [capturedImage]);
 
     const webcamRef = useRef<Webcam>(null);
+// const uploadImage = async () => {
+    //     if (capturedImage) {
+    //         console.log("there is captured image");
+    //         const response = await fetch(capturedImage);
+    //         const blob = await response.blob();
+    //
+    //         let now = new Date();
+    //         let thistime = now.getTime();
+    //         let fileName = thistime.toString() + ".jpg";
+    //
+    //         const file = new File([blob], fileName, { type: "image/jpeg" });
+    //
+    //         const formData = new FormData();
+    //         formData.append("file", file);
+    //
+    //         try {
+    //             const uploadResponse = axios.post(`${API_URL}/test/upload_test`, formData, {
+    //                 headers: {
+    //                     "Content-Type": "multipart/form-data",
+    //                 },
+    //             });
+    //         } catch (error) {
+    //             console.error("Failed to upload image", error);
+    //         }
+    //     } else {
+    //         console.log("there is no captured image");
+    //     }
+    // };
 
     const capture = useCallback(() => {
         if (webcamRef.current) {
@@ -113,6 +141,9 @@ const PaymentPage: React.FC = () => {
                 console.error("Failed to upload image", error);
             }
         }
+        // const captureAndUpload = () => {
+        //     capture();
+        // }
     };
 
     const humanRekognitionAndUpload = () => {
@@ -138,21 +169,24 @@ const PaymentPage: React.FC = () => {
 
     const handlePasswordModalClose = () => {
         setIsPasswordModalOpen(false);
-        setPassword('');
-        setIsValid(false);
-        setStoredPhoneNumber('');
-        setExistingCustomer(false);
+        setPassword(''); // 모달이 닫힐 때 비밀번호 필드 초기화
+        setIsValid(false); // 모달이 닫힐 때 유효성 상태 초기화
+        setStoredPhoneNumber(''); // 모달이 닫힐 때 저장된 전화번호 초기화
+        setExistingCustomer(false); // 모달이 닫힐 때 기존 고객 여부 초기화
     };
 
     const handleSearch = async () => {
-        setStoredPhoneNumber(searchInput);
+        console.log(searchInput); // 입력된 전화번호를 콘솔에 출력
+        setStoredPhoneNumber(searchInput); // 검색한 전화번호를 저장
         try {
             const response = await axios.get(`${API_URL}/api/customer/${searchInput}`);
             if (response.status === 200) {
+                // 전화번호가 이미 존재하면 비밀번호 입력 모달 열기
                 setExistingCustomer(true);
                 handlePointModalClose();
                 handlePasswordModalOpen();
             } else if (response.status === 404) {
+                // 전화번호가 존재하지 않으면 비밀번호 설정 모달 열기
                 setExistingCustomer(false);
                 handlePointModalClose();
                 handlePasswordModalOpen();
@@ -161,6 +195,7 @@ const PaymentPage: React.FC = () => {
             if (axios.isAxiosError(error)) {
                 const axiosError = error as AxiosError;
                 if (axiosError.response && axiosError.response.status === 404) {
+                    // 전화번호가 존재하지 않으면 비밀번호 설정 모달 열기
                     setExistingCustomer(false);
                     handlePointModalClose();
                     handlePasswordModalOpen();
@@ -200,6 +235,7 @@ const PaymentPage: React.FC = () => {
                 alert('포인트 확인에 실패했습니다.');
             }
         } else {
+            // 새 고객 등록 및 비밀번호 설정 로직
             try {
                 const response = await axios.post(`${API_URL}/api/customer/register`, {
                     phoneNumber: storedPhoneNumber,
@@ -246,27 +282,28 @@ const PaymentPage: React.FC = () => {
 
         if (window.IMP) {
             const { IMP } = window;
-            IMP.init('imp55148327');
+            IMP.init('imp55148327'); // 가맹점 식별코드
 
             IMP.request_pay(
                 {
                     pg: 'html5_inicis.INIpayTest',
                     pay_method: 'card',
-                    merchant_uid: orderData.orderUid,
-                    name: orderData.storeName,
-                    amount: finalTotalPrice,
-                    buyer_email: orderData.email,
-                    buyer_name: orderData.storeName,
-                    buyer_tel: '010-1234-5678',
-                    buyer_addr: orderData.address,
-                    buyer_postcode: '123-456',
+                    merchant_uid: orderData.orderUid, // 주문 번호
+                    name: orderData.storeName, // 상품 이름
+                    amount: finalTotalPrice, // 최종 결제 금액
+                    buyer_email: orderData.email, // 구매자 이메일
+                    buyer_name: orderData.storeName, // 구매자 이름
+                    buyer_tel: '010-1234-5678', // 임의의 값
+                    buyer_addr: orderData.address, // 구매자 주소
+                    buyer_postcode: '123-456', // 임의의 값
                 },
                 async (rsp: any) => {
                     if (rsp.success) {
+                        console.log('결제 성공:', rsp);
                         await axios.post(`${API_URL}/api/orders/iamPortDto`, {
                             price: orderData.price,
-                            paymentUid: rsp.imp_uid,
-                            orderUid: rsp.merchant_uid
+                            paymentUid: rsp.imp_uid, // 결제 고유번호
+                            orderUid: rsp.merchant_uid // 주문번호
                         });
                         try {
                             await axios.post(`${API_URL}/api/orders/createOrderRequest`, {
@@ -276,21 +313,24 @@ const PaymentPage: React.FC = () => {
                                 orderId: orderData.orderUid,
                                 payload: rsp.imp_uid
                             });
-
+                            // 결제 성공 시 주문 생성
                             const orderDTO = {
                                 customerId: authContext?.customerInfo?.id || 1,
                                 kioskId: authContext?.kioskInfo?.id,
                                 datetime: new Date(),
                                 totalPrice: orderData.price,
-                                packaged: isPackaged,
+                                packaged: isPackaged,// 포장 여부 설정
                                 paymentUid: rsp.imp_uid
                             };
 
+                            //const response = await axios.post(`${API_URL}/api/orders`, orderDTO);
+                            // 새로고침한 뒤에 문제 생김 (해결)
                             const response = await axios.post(`${API_URL}/api/orders`, orderDTO, {
                                 headers: {
                                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                                 }
                             });
+                            //response가 order임
                             setOrder(response.data);
                             await humanRekognitionAndUpload();
 
@@ -298,6 +338,7 @@ const PaymentPage: React.FC = () => {
                                 return {
                                     paymentUid: orderDTO.paymentUid,
                                     menuId: product.id,
+                                    // customOptions: product.options,
                                     quantity: product.quantity,
                                     price: product.price
                                 }
