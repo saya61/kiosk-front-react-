@@ -1,6 +1,6 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Header from './Header';
 import Category from './Category';
 import ProductList from './ProductList';
@@ -64,13 +64,14 @@ const TimerWrapper = styled.div`
 
 const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dispatch<React.SetStateAction<boolean>> }> = ({ isHighContrast, setIsHighContrast }) => {
     const authContext = useContext(AuthContext);
-    const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
+    const location = useLocation();
+    const [selectedProducts, setSelectedProducts] = useState<Product[]>(location.state?.selectedProducts || []);
     const [currentCategory, setCurrentCategory] = useState<number | null>(null);
     const [categories, setCategories] = useState<CategoryType[]>([]);
     const [currentMenuId, setCurrentMenuId] = useState<number | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [currentSelectedProduct, setCurrentSelectedProduct] = useState<Product | null>(null);
-    const [orderData, setOrderData] = useState<OrderModuleDTO | null>(null);
+    const [orderData, setOrderData] = useState<OrderModuleDTO | null>(location.state?.orderData || null);
     const timerRef = useRef<{ resetTimer: () => void }>(null);
     const navigate = useNavigate();
 
