@@ -10,6 +10,7 @@ import PaymentPage from './components/PaymentPage';
 import KioskSelectionPage from './components/KioskSelectionPage';
 import GuardPage from './components/GuardPage';
 import OrderCompleteCheck from "./components/admin/OrderCompleteCheck";
+import SirenHomePage from "./components/siren/SirenHomePage";
 
 const App: React.FC = () => {
     const [isHighContrast, setIsHighContrast] = useState(false);
@@ -26,6 +27,8 @@ const App: React.FC = () => {
                     <Route path="/guard" element={<GuardPage />} />
                     <Route path="/admin/orderComplete" element={<OrderCompleteCheck />} />
                     <Route path="*" element={<Navigate to="/users/login" />} />
+                {/*    사이렌 페이지 라우트*/}
+                    <Route path="/siren" element={<SirenHomePage />}/>
                 </Routes>
             </ThemeProvider>
         </AuthProvider>
