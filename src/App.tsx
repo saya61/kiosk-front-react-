@@ -27,7 +27,8 @@ const App: React.FC = () => {
                     <Route path="/payment" element={<PaymentPage />} />
                     <Route path="/guard" element={<GuardPage />} />
                     <Route path="/admin/orderComplete" element={<OrderCompleteCheck />} />
-                    <Route path="/order-number" element={<OrderNumber  orderNumber={0}/>} />
+                    <Route path="/order-number/:id" element={<OrderNumber />} />
+
                     <Route path="*" element={<Navigate to="/users/login" />} />
                 {/*    사이렌 페이지 라우트*/}
                     <Route path="/siren" element={<SirenHomePage />}/>

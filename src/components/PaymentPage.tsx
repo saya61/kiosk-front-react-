@@ -348,19 +348,20 @@ const PaymentPage: React.FC = () => {
                                 await axios.post(`${API_URL}/api/orderitems`, orderItemDTOList[i]);
                             }
 
-                            alert('결제 완료!');
+                            // alert('결제 완료!');
                             setSelectedProducts([]);
                             // navigate('/guard');
 
                             let orderid = response.data.id;
                             navigate(`/order-number/${orderid}`)
+
                         } catch (error) {
                             console.error('주문 생성 실패:', error);
-                            alert('주문 생성 실패!');
+                            // alert('주문 생성 실패!');
                         }
                     } else {
                         console.error('결제 실패:', rsp.error_msg);
-                        alert('결제 실패: ' + rsp.error_msg);
+                        // alert('결제 실패: ' + rsp.error_msg);
                     }
                 }
             );
