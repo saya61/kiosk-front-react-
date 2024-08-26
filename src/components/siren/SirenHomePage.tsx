@@ -39,6 +39,8 @@ const SirenHomePage: React.FC = () => {
                 <Title>AIKiosk</Title>
                 <UserSection>
                     <p>최현철 님</p>
+                    {/* TO DO : 유저정보 스프링에서 가져오기*/}
+                    {/* TO DO : 로그아웃 상태에서는 로그인 버튼으로 변경해야함 */}
                     <svg xmlns="http://www.w3.org/2000/svg" width="41" height="34" viewBox="0 0 41 34" fill="none">
                         <path
                             d="M39.5 17C39.5 25.3098 31.2685 32.5 20.5 32.5C9.73151 32.5 1.5 25.3098 1.5 17C1.5 8.69019 9.73151 1.5 20.5 1.5C31.2685 1.5 39.5 8.69019 39.5 17Z"
@@ -48,7 +50,8 @@ const SirenHomePage: React.FC = () => {
                     </svg>
                 </UserSection>
             </Header>
-            {/*LocationSection 클릭시 지역 선택 지도로 이동*/}
+            {/* TO DO??? : LocationSection 클릭시 지역 선택 지도로 이동???*/}
+            {/*    없으면 좀 뭐해서 배민처럼 넣어봣음 */}
             <LocationSection>
                 <LocationIcon>
                     <svg xmlns="http://www.w3.org/2000/svg" width="34" height="24" viewBox="0 0 34 24" fill="none">
@@ -60,9 +63,12 @@ const SirenHomePage: React.FC = () => {
                     </svg>
                 </LocationIcon>
                 <LocationText>노원구 공릉동 삼육대학교 시온관</LocationText>
+            {/*    (사용자가 위치한) 선택한 지역 표시 */}
             </LocationSection>
             <MainContent>
                 <StoreListContainer>
+                    {/* 스프링에서 점포 정보 가져오기 */}
+
                     {/*{stores.map((store) => (*/}
                     {/*    <StoreCard key={store.id}>*/}
                     {/*        <StoreImage src={store.imageUrl} alt={store.name} />*/}
@@ -72,6 +78,8 @@ const SirenHomePage: React.FC = () => {
                     {/*        </StoreInfo>*/}
                     {/*    </StoreCard>*/}
                     {/*))}*/}
+
+                    {/* 카드 클릭시 해당 키오스크로 이동 */}
                     <StoreCard>
                         <StoreImage/>
                         <StoreInfo>
