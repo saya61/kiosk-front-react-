@@ -11,6 +11,7 @@ import KioskSelectionPage from './components/KioskSelectionPage';
 import GuardPage from './components/GuardPage';
 import OrderCompleteCheck from "./components/admin/OrderCompleteCheck";
 import OrderNumber from "./components/OrderNumber"
+import SirenHomePage from "./components/siren/SirenHomePage";
 
 const App: React.FC = () => {
     const [isHighContrast, setIsHighContrast] = useState(false);
@@ -28,6 +29,8 @@ const App: React.FC = () => {
                     <Route path="/admin/orderComplete" element={<OrderCompleteCheck />} />
                     <Route path="/order-number" element={<OrderNumber  orderNumber={0}/>} />
                     <Route path="*" element={<Navigate to="/users/login" />} />
+                {/*    사이렌 페이지 라우트*/}
+                    <Route path="/siren" element={<SirenHomePage />}/>
                 </Routes>
             </ThemeProvider>
         </AuthProvider>

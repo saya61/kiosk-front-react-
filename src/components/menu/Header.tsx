@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLoginModal from '../admin/modals/AdminLoginModal';
 import styled from 'styled-components';
+import {CrossIcon} from "react-select/dist/declarations/src/components/indicators";
+import {Button} from "../style/PaymentPageStyles";
 
 const HeaderWrapper = styled.header`
     grid-area: header;
@@ -37,12 +39,18 @@ const Header: React.FC = () => {
         navigate('/guard');
     };
 
+    const handleSirenHomePage = () => {
+        navigate('/siren');
+    }
+
     return (
         <HeaderWrapper>
             <HomeIcon onClick={handleMainPage}>🏠</HomeIcon>
             <h1>Easy KIOSK</h1>
             <SettingsIcon onClick={handleAdminClick}>⚙️</SettingsIcon>
             {isAdminLoginOpen && <AdminLoginModal onClose={handleAdminLoginClose} />}
+            {/* 사이렌 테스트 버튼 */}
+            <Button onClick={handleSirenHomePage}>사이렌</Button>
         </HeaderWrapper>
     );
 }
