@@ -10,6 +10,7 @@ import PaymentPage from './components/PaymentPage';
 import KioskSelectionPage from './components/KioskSelectionPage';
 import GuardPage from './components/GuardPage';
 import OrderCompleteCheck from "./components/admin/OrderCompleteCheck";
+import OrderNumber from "./components/OrderNumber"
 
 const App: React.FC = () => {
     const [isHighContrast, setIsHighContrast] = useState(false);
@@ -25,6 +26,7 @@ const App: React.FC = () => {
                     <Route path="/payment" element={<PaymentPage />} />
                     <Route path="/guard" element={<GuardPage />} />
                     <Route path="/admin/orderComplete" element={<OrderCompleteCheck />} />
+                    <Route path="/order-number" element={<OrderNumber  orderNumber={0}/>} />
                     <Route path="*" element={<Navigate to="/users/login" />} />
                 </Routes>
             </ThemeProvider>

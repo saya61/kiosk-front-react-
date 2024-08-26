@@ -371,8 +371,11 @@ const PaymentPage: React.FC = () => {
                             } else {
                                 console.log('비회원 결제');
                             }
+                            let orderid = response.data.id;
 
-                            navigate('/guard'); // 결제 완료 후 홈으로 이동
+                            // navigate('/guard'); // 결제 완료 후 홈으로 이동
+                            navigate(`/order-number/${orderid}`);
+
                         } catch (error) {
                             console.error('주문 생성 실패:', error);
                             alert('주문 생성 실패!');
