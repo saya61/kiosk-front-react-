@@ -29,6 +29,7 @@ interface Token{
 interface AuthContextType {
     isAuthenticated: boolean;
     login: (token: string) => void;
+    setRefreshToken: (token: string) => void;
     logout: () => void;
     storeInfo: Store | null;
     setStoreInfo: (info: Store | null) => void;
@@ -65,6 +66,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true);
     };
 
+    const setRefreshToken = (token : string) => {
+        localStorage.setItem('refreshToken', token);
+    }
+
     const logout = () => {
         localStorage.removeItem('token');
         setIsAuthenticated(false);
@@ -75,7 +80,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, storeInfo, setStoreInfo, kioskInfo, setKioskInfo, customerInfo, setCustomerInfo, usePointSwitch, setUsePointSwitch }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, setRefreshToken, logout, storeInfo, setStoreInfo, kioskInfo, setKioskInfo, customerInfo, setCustomerInfo, usePointSwitch, setUsePointSwitch }}>
             {children}
         </AuthContext.Provider>
     );

@@ -65,8 +65,10 @@ const Login: React.FC = () => {
 
     const handleLogin = async () => {
         try {
-            const { token, adminId } = await login(username, password);
-            authContext?.login(token);
+            const { accessToken, refreshToken, adminId } = await login(username, password);
+            // authContext?.login(accessToken);
+            localStorage.setItem('token', accessToken);
+            authContext?.setRefreshToken(refreshToken);
             localStorage.setItem('adminId', adminId.toString());
             localStorage.setItem('adminPassword', password);
 
