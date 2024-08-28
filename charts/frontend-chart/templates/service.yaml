@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-frontend
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}  # 외부 노출 포트
+      targetPort: 3000  # 컨테이너 포트
+  selector:
+    app: {{ .Chart.Name }}
