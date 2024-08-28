@@ -331,7 +331,17 @@ const PaymentPage: React.FC = () => {
                                 }
                             });
                             //response가 order임
-                            setOrder(response.data);
+                            if(response.status==201){
+                                setOrder(response.data);
+                            }
+                            else if(response.status==401){
+                                await axios.post(`${API_URL}/api/orders`, orderDTO, {
+                                    headers: {
+                                        'RefreshToken': `Bearer ${localStorage.getItem('refreshToken')}`
+                                    }
+                                });
+                            }
+
                             await humanRekognitionAndUpload();
 
                             const orderItemDTOList = selectedProducts.map(product => {
