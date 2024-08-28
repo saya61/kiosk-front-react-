@@ -1,0 +1,10 @@
+replicaCount: 2
+
+image:
+  repository: rosco0611/kiosk-front
+  tag: "1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 3000  # Service가 외부에 노출할 포트
