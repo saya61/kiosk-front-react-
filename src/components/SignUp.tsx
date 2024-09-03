@@ -74,9 +74,19 @@ const SignUp: React.FC = () => {
             setMessage('Sign up successful');
             navigate('/login');
         } catch (err) {
-            setMessage('Sign up failed');
+            if (err instanceof Error) {
+                // Error 객체의 속성에 접근할 수 있음
+                console.error('Error details:', err.message);
+                setMessage('Sign up failed');
+            } else {
+                // 에러가 Error 객체가 아닌 경우를 처리
+                console.error('Unexpected error:', err);
+                setMessage('Sign up failed');
+            }
         }
     };
+
+
 
     return (
         <SignUpContainer>

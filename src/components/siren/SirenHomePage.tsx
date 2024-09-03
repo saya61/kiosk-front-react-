@@ -1,5 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import jwt from 'jsonwebtoken';
 import {
     Container,
     Header,
@@ -24,22 +26,46 @@ interface Store {
     imageUrl: string;
 }
 
+interface DecodedToken {
+    name: string;  // JWT 페이로드에 포함된 필드
+    // 필요한 다른 필드들도 추가
+}
+
 const SirenHomePage: React.FC = () => {
     const [stores, setStores] = useState<Store[]>([]);
+    const [userName, setUserName] = useState<string>(''); // 사용자 이름 상태
+    const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('/api/stores') // API 호출 부분
+        // API에서 스토어 데이터 가져오기
+        axios.get('/api/stores')
             .then(response => setStores(response.data))
             .catch(error => console.error('Error fetching stores:', error));
+
+        // JWT에서 사용자 이름 추출하기
+        const accessToken = localStorage.getItem('accessToken');
+        if (accessToken) {
+            try {
+                const decodedToken = jwt.decode(accessToken) as DecodedToken | null; // 타입 캐스팅
+                if (decodedToken && 'name' in decodedToken) {
+                    setUserName(decodedToken.name); // 사용자 이름 상태 업데이트
+                }
+            } catch (error) {
+                console.error('Error decoding token:', error);
+            }
+        }
     }, []);
+
+    const handleLocationClick = () => {
+        navigate('/siren/location');
+    };
 
     return (
         <Container>
             <Header>
                 <Title>AIKiosk</Title>
                 <UserSection>
-                    <p>최현철 님</p>
-                    {/* TO DO : 유저정보 스프링에서 가져오기*/}
+                    <p>{userName} 님</p> {/* 사용자 이름 표시 */}
                     {/* TO DO : 로그아웃 상태에서는 로그인 버튼으로 변경해야함 */}
                     <svg xmlns="http://www.w3.org/2000/svg" width="41" height="34" viewBox="0 0 41 34" fill="none">
                         <path
@@ -50,9 +76,7 @@ const SirenHomePage: React.FC = () => {
                     </svg>
                 </UserSection>
             </Header>
-            {/* TO DO??? : LocationSection 클릭시 지역 선택 지도로 이동???*/}
-            {/*    없으면 좀 뭐해서 배민처럼 넣어봣음 */}
-            <LocationSection>
+            <LocationSection onClick={handleLocationClick}>
                 <LocationIcon>
                     <svg xmlns="http://www.w3.org/2000/svg" width="34" height="24" viewBox="0 0 34 24" fill="none">
                         <path
@@ -63,93 +87,18 @@ const SirenHomePage: React.FC = () => {
                     </svg>
                 </LocationIcon>
                 <LocationText>노원구 공릉동 삼육대학교 시온관</LocationText>
-            {/*    (사용자가 위치한) 선택한 지역 표시 */}
             </LocationSection>
             <MainContent>
                 <StoreListContainer>
-                    {/* 스프링에서 점포 정보 가져오기 */}
-
-                    {/*{stores.map((store) => (*/}
-                    {/*    <StoreCard key={store.id}>*/}
-                    {/*        <StoreImage src={store.imageUrl} alt={store.name} />*/}
-                    {/*        <StoreInfo>*/}
-                    {/*            <StoreLocation>{store.location}</StoreLocation>*/}
-                    {/*            <StoreName>{store.name}</StoreName>*/}
-                    {/*        </StoreInfo>*/}
-                    {/*    </StoreCard>*/}
-                    {/*))}*/}
-
-                    {/* 카드 클릭시 해당 키오스크로 이동 */}
-                    <StoreCard>
-                        <StoreImage/>
-                        <StoreInfo>
-                            <StoreLocation>서울시 서초구</StoreLocation>
-                            <StoreName>깐부치킨</StoreName>
-                        </StoreInfo>
-                    </StoreCard>
-                    <StoreCard>
-                        <StoreImage/>
-                        <StoreInfo>
-                            <StoreLocation>서울시 서초구</StoreLocation>
-                            <StoreName>깐부치킨</StoreName>
-                        </StoreInfo>
-                    </StoreCard>
-                    <StoreCard>
-                        <StoreImage/>
-                        <StoreInfo>
-                            <StoreLocation>서울시 서초구</StoreLocation>
-                            <StoreName>깐부치킨</StoreName>
-                        </StoreInfo>
-                    </StoreCard>
-                    <StoreCard>
-                        <StoreImage/>
-                        <StoreInfo>
-                            <StoreLocation>서울시 서초구</StoreLocation>
-                            <StoreName>깐부치킨</StoreName>
-                        </StoreInfo>
-                    </StoreCard>
-                    <StoreCard>
-                        <StoreImage/>
-                        <StoreInfo>
-                            <StoreLocation>서울시 서초구</StoreLocation>
-                            <StoreName>깐부치킨</StoreName>
-                        </StoreInfo>
-                    </StoreCard>
-                    <StoreCard>
-                        <StoreImage/>
-                        <StoreInfo>
-                            <StoreLocation>서울시 서초구</StoreLocation>
-                            <StoreName>깐부치킨</StoreName>
-                        </StoreInfo>
-                    </StoreCard>
-                    <StoreCard>
-                        <StoreImage/>
-                        <StoreInfo>
-                            <StoreLocation>서울시 서초구</StoreLocation>
-                            <StoreName>깐부치킨</StoreName>
-                        </StoreInfo>
-                    </StoreCard>
-                    <StoreCard>
-                        <StoreImage/>
-                        <StoreInfo>
-                            <StoreLocation>서울시 서초구</StoreLocation>
-                            <StoreName>깐부치킨</StoreName>
-                        </StoreInfo>
-                    </StoreCard>
-                    <StoreCard>
-                        <StoreImage/>
-                        <StoreInfo>
-                            <StoreLocation>서울시 서초구</StoreLocation>
-                            <StoreName>깐부치킨</StoreName>
-                        </StoreInfo>
-                    </StoreCard>
-                    <StoreCard>
-                        <StoreImage/>
-                        <StoreInfo>
-                            <StoreLocation>서울시 서초구</StoreLocation>
-                            <StoreName>깐부치킨</StoreName>
-                        </StoreInfo>
-                    </StoreCard>
+                    {stores.map((store) => (
+                        <StoreCard key={store.id}>
+                            <StoreImage src={store.imageUrl} alt={store.name} />
+                            <StoreInfo>
+                                <StoreLocation>{store.location}</StoreLocation>
+                                <StoreName>{store.name}</StoreName>
+                            </StoreInfo>
+                        </StoreCard>
+                    ))}
                 </StoreListContainer>
             </MainContent>
         </Container>

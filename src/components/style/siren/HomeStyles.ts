@@ -24,6 +24,7 @@ export const Title = styled.h1`
     padding-left : 4.5rem;
     font-style: italic;
     font-weight: bold;
+    
     color: white;
 `;
 
