@@ -12,9 +12,9 @@ import GuardPage from './components/GuardPage';
 import OrderCompleteCheck from "./components/admin/OrderCompleteCheck";
 import OrderNumber from "./components/OrderNumber"
 import SirenHomePage from "./components/siren/SirenHomePage";
-import GoogleMapWithMarker from "./components/siren/GoogleMapWithMarker";
 import SirenLoginPage from "./components/siren/SirenLoginPage";
 import SirenRegisterPage from "./components/siren/SirenRegisterPage";
+import SirenLocationSelectionPage from "./components/siren/SirenLocationSelectionPage";
 
 
 const App: React.FC = () => {
@@ -36,7 +36,7 @@ const App: React.FC = () => {
                     <Route path="*" element={<Navigate to="/users/login" />} />
                 {/*    사이렌 페이지 라우트*/}
                     <Route path="/siren" element={<SirenHomePage />}/>
-                    <Route path="/siren/location" element={<GoogleMapWithMarker/>}/>
+                    <Route path="/siren/location" element={<SirenLocationSelectionPage/>}/>
                     <Route path="/siren/login" element={<SirenLoginPage/>} />
                     <Route path="/siren/register" element={<SirenRegisterPage />} />
                 </Routes>
