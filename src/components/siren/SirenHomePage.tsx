@@ -1,7 +1,8 @@
+// sirenhompage.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import jwt from 'jsonwebtoken';
+import {jwtDecode} from 'jwt-decode';
 import {
     Container,
     Header,
@@ -19,6 +20,12 @@ import {
     StoreName,
 } from '../style/siren/HomeStyles';
 
+// JWT의 형식을 확인하는 함수
+const isValidJWT = (token: string): boolean => {
+    const parts = token.split('.');
+    return parts.length === 3; // JWT는 정확히 3개의 부분이 있어야 합니다.
+};
+
 interface Store {
     id: number;
     name: string;
@@ -27,38 +34,83 @@ interface Store {
 }
 
 interface DecodedToken {
-    name: string;  // JWT 페이로드에 포함된 필드
-    // 필요한 다른 필드들도 추가
+    iss: string;
+    iat: number;
+    exp: number;
+    sub: string;
 }
 
 const SirenHomePage: React.FC = () => {
     const [stores, setStores] = useState<Store[]>([]);
     const [userName, setUserName] = useState<string>(''); // 사용자 이름 상태
+    const [userId, setUserId] = useState<string | null>(null); // JWT에서 추출한 유저 ID
+    const [address,setAddress]=useState<string | null>(null);
+    const [latitude, setLatitude] = useState<number>(0);
+    const [longitude,setLongitude] = useState<number>(0);
+
     const navigate = useNavigate();
 
     useEffect(() => {
-        // API에서 스토어 데이터 가져오기
-        axios.get('/api/stores')
-            .then(response => setStores(response.data))
-            .catch(error => console.error('Error fetching stores:', error));
-
-        // JWT에서 사용자 이름 추출하기
         const accessToken = localStorage.getItem('accessToken');
-        if (accessToken) {
+        console.log('Access Token from localStorage:', accessToken);
+
+        if (accessToken && isValidJWT(accessToken)) {
             try {
-                const decodedToken = jwt.decode(accessToken) as DecodedToken | null; // 타입 캐스팅
-                if (decodedToken && 'name' in decodedToken) {
-                    setUserName(decodedToken.name); // 사용자 이름 상태 업데이트
+                const decodedToken = jwtDecode<DecodedToken>(accessToken);
+                if (decodedToken && decodedToken.sub) {
+                    fetchUser(decodedToken.sub); // 사용자 정보를 가져오기
                 }
             } catch (error) {
                 console.error('Error decoding token:', error);
             }
+        } else {
+            console.error('Access token is missing or invalid');
         }
+
+        // API에서 스토어 데이터 가져오기
+        axios.get('http://localhost:8080/api/kk/store/all')
+            .then(response => setStores(response.data))
+            .catch(error => console.error('Error fetching stores:', error));
     }, []);
 
-    const handleLocationClick = () => {
-        navigate('/siren/location');
+    const fetchUser = async (userId: string) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/kk/siren/user/${userId}`);
+            if (response.status === 200) {
+                setUserName(response.data.name); // 사용자 이름 상태 업데이트
+                setUserId(response.data.id); // 이거 왜되는거임?
+                setAddress(response.data.address);
+                setLatitude(response.data.latitude);
+                setLongitude(response.data.longitude);
+            }
+            console.log(response)
+            console.log(userId)
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                // AxiosError 타입으로 좁히기
+                console.error('Error fetching user:', error.response ? error.response.data : error.message);
+            } else {
+                // 다른 에러 타입 처리
+                console.error('Unexpected error:', error);
+            }
+        }
     };
+
+
+
+
+    const handleStoreClick = () => {
+        navigate('/menu')
+    }
+
+    const handleLocationClick = () => {
+        if (userId) {
+            navigate('/siren/location', { state: { userId } });
+        } else {
+            console.error('User ID is null');
+        }
+    };
+
 
     return (
         <Container>
@@ -86,16 +138,17 @@ const SirenHomePage: React.FC = () => {
                               stroke="#FFC5AE" strokeWidth="2" strokeLinejoin="round"/>
                     </svg>
                 </LocationIcon>
-                <LocationText>노원구 공릉동 삼육대학교 시온관</LocationText>
+                <LocationText>{address ? <span>{address}</span> : <span>지역을 선택해주세요</span>}</LocationText>
             </LocationSection>
             <MainContent>
                 <StoreListContainer>
                     {stores.map((store) => (
-                        <StoreCard key={store.id}>
+                        <StoreCard key={store.id} onClick ={handleStoreClick}>
                             <StoreImage src={store.imageUrl} alt={store.name} />
                             <StoreInfo>
-                                <StoreLocation>{store.location}</StoreLocation>
                                 <StoreName>{store.name}</StoreName>
+                                <StoreLocation>{store.location}</StoreLocation>
+                                {/*<p>(2km)</p>*/}
                             </StoreInfo>
                         </StoreCard>
                     ))}
