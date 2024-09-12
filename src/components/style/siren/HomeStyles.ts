@@ -1,3 +1,4 @@
+//homestyle.ts
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -24,6 +25,7 @@ export const Title = styled.h1`
     padding-left : 4.5rem;
     font-style: italic;
     font-weight: bold;
+
     color: white;
 `;
 
@@ -153,7 +155,7 @@ export const StoreInfo = styled.div`
 export const StoreLocation = styled.p`
     font-size: 0.9rem;
     color: #555555;
-    margin: 0;
+    margin-top: 10px;
 `;
 
 export const StoreName = styled.h2`

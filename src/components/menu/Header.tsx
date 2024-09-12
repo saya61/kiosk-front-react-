@@ -1,3 +1,4 @@
+// header.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLoginModal from '../admin/modals/AdminLoginModal';
@@ -49,8 +50,6 @@ const Header: React.FC = () => {
             <h1>Easy KIOSK</h1>
             <SettingsIcon onClick={handleAdminClick}>⚙️</SettingsIcon>
             {isAdminLoginOpen && <AdminLoginModal onClose={handleAdminLoginClose} />}
-            {/* 사이렌 테스트 버튼 */}
-            <Button onClick={handleSirenHomePage}>사이렌</Button>
         </HeaderWrapper>
     );
 }
