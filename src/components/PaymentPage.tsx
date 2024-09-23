@@ -23,6 +23,7 @@ import {
 import PointModal from './PointModal';
 import PasswordModal from './PasswordModal';
 import Webcam from 'react-webcam';
+import * as PortOne from "@portone/browser-sdk/v2";
 
 
 
@@ -65,7 +66,7 @@ const PaymentPage: React.FC = () => {
     useEffect(() => {
         const loadIamportScript = async () => {
             try {
-                await loadScript('https://cdn.iamport.kr/v1/iamport.js');
+                await loadScript('https://cdn.portone.io/v2/browser-sdk.js');
                 await loadScript('https://code.jquery.com/jquery-1.12.4.min.js');
                 setIsScriptLoaded(true);
             } catch (error) {
@@ -273,111 +274,205 @@ const PaymentPage: React.FC = () => {
         handlePasswordModalClose();
     };
 
+    // Portone V2
+    async function requestPayment() {
+        // @ts-ignore
+        const response = await PortOne.requestPayment(
+            {
+                // Store ID 설정
+                storeId: "store-ad45873a-cce5-4928-88c9-2343b0fe3a2a",
+                // 채널 키 설정
+                channelKey: "channel-key-a8a93b55-8642-4a34-b2a5-a9e39771d2dd",
+                paymentId: orderData.orderUid,  // 주문 번호
+                orderName: orderData.storeName, // 상품 이름
+                totalAmount: orderData.price,   // 상품 가격
+                currency: "CURRENCY_KRW",
+                payMethod: "CARD"
+            }
+        );
+        // @ts-ignore
+        if (response.code != null) {    // 오류 발생
+            // @ts-ignore
+            return console.error(response.message);
+        }
+        console.log('결제 성공:');
+        await axios.post(`${API_URL}/api/orders/iamPortDto`, {
+            price: orderData.price,
+            paymentUid: orderData.orderUid, // 결제 고유번호
+            orderUid: orderData.orderUid // 주문번호
+        });
+        try {
+            await axios.post(`${API_URL}/api/orders/createOrderRequest`, {
+                storeId: authContext?.storeInfo?.id,
+                kioskId: authContext?.kioskInfo?.id,
+                productId: selectedProducts.map(p => p.id).join(","),
+                orderId: orderData.orderUid,
+                payload: orderData.orderUid
+            });
+            // 결제 성공 시 주문 생성
+            const orderDTO = {
+                customerId: authContext?.customerInfo?.id || 1,
+                kioskId: authContext?.kioskInfo?.id,
+                datetime: new Date(),
+                totalPrice: orderData.price,
+                packaged: isPackaged,// 포장 여부 설정
+                paymentUid: orderData.orderUid
+            };
+
+            //const response = await axios.post(`${API_URL}/api/orders`, orderDTO);
+            // 새로고침한 뒤에 문제 생김 (해결)
+            const response = await axios.post(`${API_URL}/api/orders`, orderDTO, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            //response가 order임
+            if(response.status==201){
+                setOrder(response.data);
+            }
+            else if(response.status==401){
+                await axios.post(`${API_URL}/api/orders`, orderDTO, {
+                    headers: {
+                        'RefreshToken': `Bearer ${localStorage.getItem('refreshToken')}`
+                    }
+                });
+            }
+
+            await humanRekognitionAndUpload();
+
+            const orderItemDTOList = selectedProducts.map(product => {
+                return {
+                    paymentUid: orderDTO.paymentUid,
+                    menuId: product.id,
+                    // customOptions: product.options,
+                    quantity: product.quantity,
+                    price: product.price
+                }
+            });
+
+            for (let i = 0; i < orderItemDTOList.length; i++) {
+                await axios.post(`${API_URL}/api/orderitems`, orderItemDTOList[i]);
+            }
+
+            // alert('결제 완료!');
+            setSelectedProducts([]);
+            // navigate('/guard');
+
+            let orderid = response.data.id;
+            navigate(`/order-number/${orderid}`)
+
+        } catch (error) {
+            console.error('주문 생성 실패:', error);
+            // alert('주문 생성 실패!');
+        }
+    }
+
     const requestPay = () => {
         if (isPackaged === undefined) {
             setHighlightButtons(true);
             setTimeout(() => setHighlightButtons(false), 10000);
             return;
         }
-
-        if (window.IMP) {
-            const { IMP } = window;
-            IMP.init('imp55148327'); // 가맹점 식별코드
-
-            IMP.request_pay(
-                {
-                    pg: 'html5_inicis.INIpayTest',
-                    pay_method: 'card',
-                    merchant_uid: orderData.orderUid, // 주문 번호
-                    name: orderData.storeName, // 상품 이름
-                    amount: finalTotalPrice, // 최종 결제 금액
-                    buyer_email: orderData.email, // 구매자 이메일
-                    buyer_name: orderData.storeName, // 구매자 이름
-                    buyer_tel: '010-1234-5678', // 임의의 값
-                    buyer_addr: orderData.address, // 구매자 주소
-                    buyer_postcode: '123-456', // 임의의 값
-                },
-                async (rsp: any) => {
-                    if (rsp.success) {
-                        console.log('결제 성공:', rsp);
-                        await axios.post(`${API_URL}/api/orders/iamPortDto`, {
-                            price: orderData.price,
-                            paymentUid: rsp.imp_uid, // 결제 고유번호
-                            orderUid: rsp.merchant_uid // 주문번호
-                        });
-                        try {
-                            await axios.post(`${API_URL}/api/orders/createOrderRequest`, {
-                                storeId: authContext?.storeInfo?.id,
-                                kioskId: authContext?.kioskInfo?.id,
-                                productId: selectedProducts.map(p => p.id).join(","),
-                                orderId: orderData.orderUid,
-                                payload: rsp.imp_uid
-                            });
-                            // 결제 성공 시 주문 생성
-                            const orderDTO = {
-                                customerId: authContext?.customerInfo?.id || 1,
-                                kioskId: authContext?.kioskInfo?.id,
-                                datetime: new Date(),
-                                totalPrice: orderData.price,
-                                packaged: isPackaged,// 포장 여부 설정
-                                paymentUid: rsp.imp_uid
-                            };
-
-                            //const response = await axios.post(`${API_URL}/api/orders`, orderDTO);
-                            // 새로고침한 뒤에 문제 생김 (해결)
-                            const response = await axios.post(`${API_URL}/api/orders`, orderDTO, {
-                                headers: {
-                                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                                }
-                            });
-                            //response가 order임
-                            if(response.status==201){
-                                setOrder(response.data);
-                            }
-                            else if(response.status==401){
-                                await axios.post(`${API_URL}/api/orders`, orderDTO, {
-                                    headers: {
-                                        'RefreshToken': `Bearer ${localStorage.getItem('refreshToken')}`
-                                    }
-                                });
-                            }
-
-                            await humanRekognitionAndUpload();
-
-                            const orderItemDTOList = selectedProducts.map(product => {
-                                return {
-                                    paymentUid: orderDTO.paymentUid,
-                                    menuId: product.id,
-                                    // customOptions: product.options,
-                                    quantity: product.quantity,
-                                    price: product.price
-                                }
-                            });
-
-                            for (let i = 0; i < orderItemDTOList.length; i++) {
-                                await axios.post(`${API_URL}/api/orderitems`, orderItemDTOList[i]);
-                            }
-
-                            // alert('결제 완료!');
-                            setSelectedProducts([]);
-                            // navigate('/guard');
-
-                            let orderid = response.data.id;
-                            navigate(`/order-number/${orderid}`)
-
-                        } catch (error) {
-                            console.error('주문 생성 실패:', error);
-                            // alert('주문 생성 실패!');
-                        }
-                    } else {
-                        console.error('결제 실패:', rsp.error_msg);
-                        // alert('결제 실패: ' + rsp.error_msg);
-                    }
-                }
-            );
-        } else {
-            console.error('Iamport object is not found.');
-        }
+        requestPayment();
+        // PortOne V1
+        // if (window.IMP) {
+        //     const { IMP } = window;
+        //     IMP.init('imp55148327'); // 가맹점 식별코드
+        //
+        //     IMP.request_pay(
+        //         {
+        //             pg: 'html5_inicis.INIpayTest',
+        //             pay_method: 'card',
+        //             merchant_uid: orderData.orderUid, // 주문 번호
+        //             name: orderData.storeName, // 상품 이름
+        //             amount: finalTotalPrice, // 최종 결제 금액
+        //             buyer_email: orderData.email, // 구매자 이메일
+        //             buyer_name: orderData.storeName, // 구매자 이름
+        //             buyer_tel: '010-1234-5678', // 임의의 값
+        //             buyer_addr: orderData.address, // 구매자 주소
+        //             buyer_postcode: '123-456', // 임의의 값
+        //         },
+        //         async (rsp: any) => {
+        //             if (rsp.success) {
+        //                 console.log('결제 성공:', rsp);
+        //                 await axios.post(`${API_URL}/api/orders/iamPortDto`, {
+        //                     price: orderData.price,
+        //                     paymentUid: rsp.imp_uid, // 결제 고유번호
+        //                     orderUid: rsp.merchant_uid // 주문번호
+        //                 });
+        //                 try {
+        //                     await axios.post(`${API_URL}/api/orders/createOrderRequest`, {
+        //                         storeId: authContext?.storeInfo?.id,
+        //                         kioskId: authContext?.kioskInfo?.id,
+        //                         productId: selectedProducts.map(p => p.id).join(","),
+        //                         orderId: orderData.orderUid,
+        //                         payload: rsp.imp_uid
+        //                     });
+        //                     // 결제 성공 시 주문 생성
+        //                     const orderDTO = {
+        //                         customerId: authContext?.customerInfo?.id || 1,
+        //                         kioskId: authContext?.kioskInfo?.id,
+        //                         datetime: new Date(),
+        //                         totalPrice: orderData.price,
+        //                         packaged: isPackaged,// 포장 여부 설정
+        //                         paymentUid: rsp.imp_uid
+        //                     };
+        //
+        //                     //const response = await axios.post(`${API_URL}/api/orders`, orderDTO);
+        //                     // 새로고침한 뒤에 문제 생김 (해결)
+        //                     const response = await axios.post(`${API_URL}/api/orders`, orderDTO, {
+        //                         headers: {
+        //                             'Authorization': `Bearer ${localStorage.getItem('token')}`
+        //                         }
+        //                     });
+        //                     //response가 order임
+        //                     if(response.status==201){
+        //                         setOrder(response.data);
+        //                     }
+        //                     else if(response.status==401){
+        //                         await axios.post(`${API_URL}/api/orders`, orderDTO, {
+        //                             headers: {
+        //                                 'RefreshToken': `Bearer ${localStorage.getItem('refreshToken')}`
+        //                             }
+        //                         });
+        //                     }
+        //
+        //                     await humanRekognitionAndUpload();
+        //
+        //                     const orderItemDTOList = selectedProducts.map(product => {
+        //                         return {
+        //                             paymentUid: orderDTO.paymentUid,
+        //                             menuId: product.id,
+        //                             // customOptions: product.options,
+        //                             quantity: product.quantity,
+        //                             price: product.price
+        //                         }
+        //                     });
+        //
+        //                     for (let i = 0; i < orderItemDTOList.length; i++) {
+        //                         await axios.post(`${API_URL}/api/orderitems`, orderItemDTOList[i]);
+        //                     }
+        //
+        //                     // alert('결제 완료!');
+        //                     setSelectedProducts([]);
+        //                     // navigate('/guard');
+        //
+        //                     let orderid = response.data.id;
+        //                     navigate(`/order-number/${orderid}`)
+        //
+        //                 } catch (error) {
+        //                     console.error('주문 생성 실패:', error);
+        //                     // alert('주문 생성 실패!');
+        //                 }
+        //             } else {
+        //                 console.error('결제 실패:', rsp.error_msg);
+        //                 // alert('결제 실패: ' + rsp.error_msg);
+        //             }
+        //         }
+        //     );
+        // } else {
+        //     console.error('Iamport object is not found.');
+        // }
     };
 
     const handleTestButtonClick = () => {
