@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './AdminDashboardGlobal.css';
 
 interface AdminLoginModalProps {
     onClose: () => void;

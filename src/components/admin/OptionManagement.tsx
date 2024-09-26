@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../api/axiosConfig';
+import './AdminDashboardGlobal.css';
 
 interface Option {
     id: number;
@@ -115,9 +116,9 @@ const OptionManagement: React.FC = () => {
     });
 
     return (
-        <div>
+        <div className="container">
             <h2>옵션 관리</h2>
-            <button onClick={() => setShowAddModal(true)}>+ 옵션 추가</button>
+            <button className="add-button-right" onClick={() => setShowAddModal(true)}>+ 옵션 추가</button>
             {showAddModal && (
                 <div className="modal">
                     <h3>옵션 추가</h3>
@@ -146,7 +147,6 @@ const OptionManagement: React.FC = () => {
                             value={newItemPrice}
                             onChange={(e) => setNewItemPrice(parseFloat(e.target.value))}
                             placeholder="옵션 가격"
-                            // 만약 옵션이 SIZE 면 가격은 상관없이(default 값) 입력
                         />
                         <button onClick={handleAddItemToOption}>항목 추가</button>
                     </div>
@@ -157,14 +157,6 @@ const OptionManagement: React.FC = () => {
                             </div>
                         ))}
                     </div>
-                    {/*<label>*/}
-                    {/*    필수 여부*/}
-                    {/*    <input*/}
-                    {/*        type="checkbox"*/}
-                    {/*        checked={newOptionRequired}*/}
-                    {/*        onChange={(e) => setNewOptionRequired(e.target.checked)}*/}
-                    {/*    />*/}
-                    {/*</label>*/}
                     <button onClick={handleAddOption}>저장</button>
                     <button onClick={handleCloseModal}>취소</button>
                 </div>
@@ -176,14 +168,28 @@ const OptionManagement: React.FC = () => {
                     <option value="menuName">상품명</option>
                 </select>
             </div>
-            <ul>
+            <table>
+                <thead>
+                <tr>
+                    <th>상품명</th>
+                    <th>적용된 옵션</th>
+                    <th>가격</th>
+                    <th>액션</th>
+                </tr>
+                </thead>
+                <tbody>
                 {sortedOptions.map(option => (
-                    <li key={option.id}>
-                        <span>상품명 : {option.menuName} / 적용된 옵션 : {option.name} / 가격 : {option.additionalPrice}</span>
-                        <button onClick={() => handleDeleteOption(option.id)}>삭제</button>
-                    </li>
+                    <tr key={option.id}>
+                        <td>{option.menuName}</td>
+                        <td>{option.name}</td>
+                        <td>{option.additionalPrice}</td>
+                        <td>
+                            <button onClick={() => handleDeleteOption(option.id)}>삭제</button>
+                        </td>
+                    </tr>
                 ))}
-            </ul>
+                </tbody>
+            </table>
         </div>
     );
 };

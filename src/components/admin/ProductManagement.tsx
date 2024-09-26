@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../api/axiosConfig';
 import Select, { SingleValue } from 'react-select';
+import './AdminDashboardGlobal.css';
 
 interface Product {
     id: number;
@@ -140,7 +141,7 @@ const ProductManagement: React.FC = () => {
     }));
 
     return (
-        <div>
+        <div className="container">
             <h2>상품 관리</h2>
             {/*<div>
                 {categories.map(category => (
@@ -159,25 +160,28 @@ const ProductManagement: React.FC = () => {
                     전체
                 </button>
             </div>*/}
-            <button onClick={handleOpenAddModal}>+ 상품 추가</button>
+            <button className="add-button-right" onClick={handleOpenAddModal}>+ 상품 추가</button>
             {showAddModal && (
                 <div className="modal">
                     <h3>상품 추가</h3>
                     <input
                         type="text"
                         value={newProduct.name}
-                        onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                        onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
                         placeholder="상품 이름"
                     />
                     <input
                         type="number"
                         value={newProduct.price}
-                        onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })}
+                        onChange={(e) => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
                         placeholder="상품 가격"
                     />
                     <Select
                         options={categoryOptions}
-                        onChange={(selectedOption: SingleValue<CategoryOption>) => setNewProduct({ ...newProduct, category: selectedOption?.value || '' })}
+                        onChange={(selectedOption: SingleValue<CategoryOption>) => setNewProduct({
+                            ...newProduct,
+                            category: selectedOption?.value || ''
+                        })}
                         placeholder="카테고리 선택"
                     />
                     <label>
@@ -185,12 +189,12 @@ const ProductManagement: React.FC = () => {
                         <input
                             type="checkbox"
                             checked={newProduct.soldOut}
-                            onChange={(e) => setNewProduct({ ...newProduct, soldOut: e.target.checked })}
+                            onChange={(e) => setNewProduct({...newProduct, soldOut: e.target.checked})}
                         />
                     </label>
                     <select
                         value={newProduct.tag || ''}
-                        onChange={(e) => setNewProduct({ ...newProduct, tag: e.target.value })}
+                        onChange={(e) => setNewProduct({...newProduct, tag: e.target.value})}
                     >
                         <option value="">태그 선택</option>
                         <option value="인기">인기</option>
@@ -206,19 +210,22 @@ const ProductManagement: React.FC = () => {
                     <input
                         type="text"
                         value={newProduct.name}
-                        onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                        onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
                         placeholder="상품 이름"
                     />
                     <input
                         type="number"
                         value={newProduct.price}
-                        onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })}
+                        onChange={(e) => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
                         placeholder="상품 가격"
                     />
                     <Select
                         options={categoryOptions}
                         value={categoryOptions.find(option => option.value === newProduct.category) || null}
-                        onChange={(selectedOption: SingleValue<CategoryOption>) => setNewProduct({ ...newProduct, category: selectedOption?.value || '' })}
+                        onChange={(selectedOption: SingleValue<CategoryOption>) => setNewProduct({
+                            ...newProduct,
+                            category: selectedOption?.value || ''
+                        })}
                         placeholder="카테고리 선택"
                     />
                     <label>
@@ -226,12 +233,12 @@ const ProductManagement: React.FC = () => {
                         <input
                             type="checkbox"
                             checked={newProduct.soldOut}
-                            onChange={(e) => setNewProduct({ ...newProduct, soldOut: e.target.checked })}
+                            onChange={(e) => setNewProduct({...newProduct, soldOut: e.target.checked})}
                         />
                     </label>
                     <select
                         value={newProduct.tag || ''}
-                        onChange={(e) => setNewProduct({ ...newProduct, tag: e.target.value })}
+                        onChange={(e) => setNewProduct({...newProduct, tag: e.target.value})}
                     >
                         <option value="">태그 선택</option>
                         <option value="인기">인기</option>
@@ -241,15 +248,33 @@ const ProductManagement: React.FC = () => {
                     <button onClick={handleCloseModal}>취소</button>
                 </div>
             )}
-            <ul>
+            <table>
+                <thead>
+                <tr>
+                    <th>상품 이름</th>
+                    <th>가격</th>
+                    <th>카테고리</th>
+                    <th>품절 여부</th>
+                    <th>태그</th>
+                    <th>액션</th>
+                </tr>
+                </thead>
+                <tbody>
                 {filteredProducts.map(product => (
-                    <li key={product.id}>
-                        <span>{product.name}</span>
-                        <button onClick={() => openEditModal(product)}>수정</button>
-                        <button onClick={() => handleDeleteProduct(product.id)}>삭제</button>
-                    </li>
+                    <tr key={product.id}>
+                        <td>{product.name}</td>
+                        <td>{product.price}</td>
+                        <td>{categories.find(category => category.id === parseInt(product.category))?.name}</td>
+                        <td>{product.soldOut ? '품절' : '판매 중'}</td>
+                        <td>{product.tag}</td>
+                        <td>
+                            <button onClick={() => openEditModal(product)}>수정</button>
+                            <button onClick={() => handleDeleteProduct(product.id)}>삭제</button>
+                        </td>
+                    </tr>
                 ))}
-            </ul>
+                </tbody>
+            </table>
         </div>
     );
 };
