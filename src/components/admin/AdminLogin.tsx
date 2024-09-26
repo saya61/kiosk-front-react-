@@ -13,11 +13,11 @@ interface AdminLoginModalProps {
  */
 const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ onClose }) => {
     const [password, setPassword] = useState('');
-    const navigate = useNavigate();
 
     const handleLogin = () => {
-        if (password === 'admin_password') { // 여기서 'admin_password'는 관리자 비밀번호입니다.
-            navigate('/admin/dashboard'); // 관리자 대시보드로 전환합니다.
+        const storedPassword = localStorage.getItem('adminPassword');
+        if (password === storedPassword) {
+            window.open('/admin/dashboard', '_blank');
             onClose();
         } else {
             alert('잘못된 비밀번호입니다.');
@@ -33,12 +33,12 @@ const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ onClose }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="관리자 비밀번호 입력"
             />
-            <button onClick={handleLogin}>로그인</button>
-            <button onClick={onClose}>취소</button>
+            <div className="button-group">
+                <button onClick={handleLogin}>로그인</button>
+                <button onClick={onClose}>취소</button>
+            </div>
         </div>
     );
 };
 
 export default AdminLoginModal;
-
-// 이 코드는 현재 안쓰이는 코드 같네요.
