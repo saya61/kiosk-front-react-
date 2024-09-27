@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import './AdminDashboardGlobal.css';
 
 interface orderItem {
     menuId: number;
@@ -76,38 +77,50 @@ const OrderCompleteCheck = () => {
         }
     };
 
+    // OrderCompleteCheck.tsx - 한국어로 변환된 코드
     return (
-        <div>
+        <div className="container">
             <h1>주문 확인</h1>
-            {orderCompleteList.map(orderComplete => (
-                <div key={orderComplete.orderId}>
-                    <h2>Order ID: {orderComplete.orderId}</h2>
-                    <p>Date Time: {new Date(orderComplete.datetime).toLocaleString()}</p>
-                    <p>Complete: {orderComplete.complete ? "Yes" : "No"}</p>
-                    <h3>Order Items:</h3>
-                    <ul>
-                        {orderComplete.orderItemList.map(orderItem => (
-                            <li key={orderItem.menuId}>
-                                <p>Menu: {menuList?.find(menu => menu.id === orderItem.menuId)?.name}</p>
-                                <p>Quantity: {orderItem.quantity}</p>
-                                <p>Price: {orderItem.price}</p>
-                            </li>
-                        ))}
-                    </ul>
-                    <button
-                        onClick={() => completeOrder(orderComplete.orderId)}
-                        disabled={orderComplete.complete || loading}
-                    >
-                        {orderComplete.complete ? "Completed" : "Complete Order"}
-                    </button>
-                </div>
-            ))}
-
-            {/* 로딩 중일 때 화면을 어둡게 처리하는 overlay */}
+            <table>
+                <thead>
+                <tr>
+                    <th>주문 번호</th>
+                    <th>주문 시간</th>
+                    <th>완료 여부</th>
+                    <th>주문 항목</th>
+                    <th>액션</th>
+                </tr>
+                </thead>
+                <tbody>
+                {orderCompleteList.map(orderComplete => (
+                    <tr key={orderComplete.orderId}>
+                        <td>{orderComplete.orderId}</td>
+                        <td>{new Date(orderComplete.datetime).toLocaleString()}</td>
+                        <td>{orderComplete.complete ? "예" : "아니오"}</td>
+                        <td>
+                            <ul>
+                                {orderComplete.orderItemList.map(orderItem => (
+                                    <li key={orderItem.menuId}>
+                                        메뉴: {menuList?.find(menu => menu.id === orderItem.menuId)?.name},
+                                        수량: {orderItem.quantity},
+                                        가격: {orderItem.price}
+                                    </li>
+                                ))}
+                            </ul>
+                        </td>
+                        <td>
+                            <button onClick={() => completeOrder(orderComplete.orderId)} disabled={orderComplete.complete || loading}>
+                                {orderComplete.complete ? "완료됨" : "주문 완료 처리"}
+                            </button>
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
             {loading && (
                 <div className="overlay">
                     <div className="modal">
-                        <p>Processing your order...</p>
+                        <p>주문을 처리 중입니다...</p>
                     </div>
                 </div>
             )}

@@ -1,13 +1,14 @@
 .admin-dashboard {
     display: flex;
-    height: 100vh;
+    flex-direction: row;
+    min-height: 100vh;
 }
 
 .admin-sidebar {
-    width: 200px;
-    background-color: #f8f8f8;
+    width: 250px;
+    background-color: #333;
+    color: white;
     padding: 20px;
-    border-right: 1px solid #ccc;
 }
 
 .admin-sidebar ul {
@@ -16,12 +17,13 @@
 }
 
 .admin-sidebar li {
-    margin-bottom: 10px;
+    margin: 20px 0;
 }
 
 .admin-sidebar a {
+    color: white;
     text-decoration: none;
-    color: #333;
+    font-size: 18px;
 }
 
 .admin-content {
@@ -29,46 +31,22 @@
     padding: 20px;
 }
 
-.modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    z-index: 1000;
-}
+@media (max-width: 768px) {
+    .admin-dashboard {
+        flex-direction: column;
+    }
 
-.modal input {
-    display: block;
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 8px;
-}
+    .admin-sidebar {
+        width: 100%;
+        padding: 10px;
+        text-align: center;
+    }
 
-.modal button {
-    margin-right: 10px;
-    padding: 8px 16px;
-}
+    .admin-sidebar li {
+        margin: 10px 0;
+    }
 
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
-    background-color: #f9f9f9;
-}
-
-li button {
-    margin-left: 10px;
-    padding: 5px 10px;
+    .admin-content {
+        padding: 10px;
+    }
 }

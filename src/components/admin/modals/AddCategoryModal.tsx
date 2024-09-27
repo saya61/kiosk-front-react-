@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './AddCategoryModal.css'
 
 interface AddCategoryModalProps {
     onAdd: (name: string) => void;
@@ -14,7 +15,7 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ onAdd, onClose }) =
     };
 
     return (
-        <div>
+        <div className="custom-modal">
             <h3>카테고리 추가</h3>
             <input
                 type="text"
@@ -22,8 +23,10 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ onAdd, onClose }) =
                 onChange={(e) => setCategoryName(e.target.value)}
                 placeholder="카테고리 이름"
             />
-            <button onClick={handleAdd}>저장</button>
-            <button onClick={onClose}>취소</button>
+            <div className="button-group">
+                <button onClick={handleAdd}>저장</button>
+                <button onClick={onClose}>취소</button>
+            </div>
         </div>
     );
 };

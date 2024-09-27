@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../api/axiosConfig';
 import {format} from 'date-fns';
+import './AdminDashboardGlobal.css';
 
 interface Order{
     id: number;
@@ -69,16 +70,28 @@ const RefundManagement: React.FC = () => {
     return (
         <>
             <h2>결제 취소 관리</h2>
-            <ul>
+            <table>
+                <thead>
+                <tr>
+                    <th>구매 시간</th>
+                    <th>가격</th>
+                    <th>액션</th>
+                </tr>
+                </thead>
+                <tbody>
                 {orders.map(order => (
-                    <li key={order.id}>
-                        <>구매시간 : {format(order.dateTime, 'yyyy-MM-dd HH:mm')} / 가격 : {order.totalPrice}</>
-                        <button onClick={() => handleDeleteOrder(order.id)}>취소</button>
-                    </li>
+                    <tr key={order.id}>
+                        <td>{format(order.dateTime, 'yyyy-MM-dd HH:mm')}</td>
+                        <td>{order.totalPrice}</td>
+                        <td>
+                            <button onClick={() => handleDeleteOrder(order.id)}>취소</button>
+                        </td>
+                    </tr>
                 ))}
-            </ul>
+                </tbody>
+            </table>
         </>
-    )
+    );
 }
 
 export default RefundManagement;
