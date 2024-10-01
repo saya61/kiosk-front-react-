@@ -142,7 +142,12 @@ const ProductManagement: React.FC = () => {
 
     return (
         <div className="container">
-            <h2>상품 관리</h2>
+            <head>
+                {/* Google Fonts link */}
+                <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap"
+                      rel="stylesheet"/>
+            </head>
+            <h2 className="custom-font">상품 관리</h2>
             {/*<div>
                 {categories.map(category => (
                     <button
@@ -162,19 +167,21 @@ const ProductManagement: React.FC = () => {
             </div>*/}
             <button className="add-button-right" onClick={handleOpenAddModal}>+ 상품 추가</button>
             {showAddModal && (
-                <div className="modal">
-                    <h3>상품 추가</h3>
+                <div className="modal" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}> {/* 부모 요소에서 수직 정렬 */}
+                    <h3 className="custom-font">상품 추가</h3>
                     <input
                         type="text"
                         value={newProduct.name}
                         onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
                         placeholder="상품 이름"
+                        style={{ width: '200px' }} // 고정된 너비 설정
                     />
                     <input
                         type="number"
                         value={newProduct.price}
                         onChange={(e) => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
                         placeholder="상품 가격"
+                        style={{ width: '150px' }}
                     />
                     <Select
                         options={categoryOptions}
@@ -184,12 +191,13 @@ const ProductManagement: React.FC = () => {
                         })}
                         placeholder="카테고리 선택"
                     />
-                    <label>
+                    <label className="custom-font1" style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap'}}>
                         품절 여부
                         <input
                             type="checkbox"
                             checked={newProduct.soldOut}
                             onChange={(e) => setNewProduct({...newProduct, soldOut: e.target.checked})}
+                            style={{ marginLeft: '1px' }}  // 체크박스와 텍스트 사이 간격 조정
                         />
                     </label>
                     <select
@@ -200,24 +208,28 @@ const ProductManagement: React.FC = () => {
                         <option value="인기">인기</option>
                         <option value="신규">신규</option>
                     </select>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}> {/* 버튼만 중앙 정렬 */}
                     <button onClick={handleAddProduct}>저장</button>
                     <button onClick={handleCloseModal}>취소</button>
+                    </div>
                 </div>
             )}
             {showEditModal && (
-                <div className="modal">
-                    <h3>상품 수정</h3>
+                <div className="modal" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}> {/* 부모 요소에서 수직 정렬 */}
+                    <h3 className="custom-font">상품 수정</h3>
                     <input
                         type="text"
                         value={newProduct.name}
                         onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
                         placeholder="상품 이름"
+                        style={{ width: '200px' }} // 고정된 너비 설정
                     />
                     <input
                         type="number"
                         value={newProduct.price}
                         onChange={(e) => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
                         placeholder="상품 가격"
+                        style={{ width: '150px' }}
                     />
                     <Select
                         options={categoryOptions}
@@ -251,12 +263,12 @@ const ProductManagement: React.FC = () => {
             <table>
                 <thead>
                 <tr>
-                    <th>상품 이름</th>
-                    <th>가격</th>
-                    <th>카테고리</th>
-                    <th>품절 여부</th>
-                    <th>태그</th>
-                    <th>액션</th>
+                    <th className="custom-font1">상품 이름</th>
+                    <th className="custom-font1">가격</th>
+                    <th className="custom-font1">카테고리</th>
+                    <th className="custom-font1">품절 여부</th>
+                    <th className="custom-font1">태그</th>
+                    <th className="custom-font1">액션</th>
                 </tr>
                 </thead>
                 <tbody>
