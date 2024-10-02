@@ -68,14 +68,19 @@ const RefundManagement: React.FC = () => {
     }
 
     return (
-        <>
-            <h2>결제 취소 관리</h2>
+        <div className="container">
+            <head>
+                {/* Google Fonts link */}
+                <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap"
+                      rel="stylesheet"/>
+            </head>
+            <h2 className="custom-font">결제 취소 관리</h2>
             <table>
                 <thead>
                 <tr>
-                    <th>구매 시간</th>
-                    <th>가격</th>
-                    <th>액션</th>
+                    <th className="custom-font1">구매 시간</th>
+                    <th className="custom-font1">가격</th>
+                    <th className="custom-font1">액션</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -90,7 +95,7 @@ const RefundManagement: React.FC = () => {
                 ))}
                 </tbody>
             </table>
-        </>
+        </div>
     );
 }
 

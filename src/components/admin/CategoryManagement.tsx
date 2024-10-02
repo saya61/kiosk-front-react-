@@ -61,27 +61,34 @@ const CategoryManagement: React.FC = () => {
 
     return (
         <div className="container">
-            <h2>카테고리 관리</h2>
+            <head>
+                {/* Google Fonts link */}
+                <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet"/>
+            </head>
+            <h2 className="custom-font">카테고리 관리</h2>
             <button className="add-button-right" onClick={() => setShowAddModal(true)}>+ 카테고리 추가</button>
             {showAddModal && (
                 <div className="modal">
-                    <h3>카테고리 추가</h3>
+                    <h3 className="custom-font">카테고리 추가</h3>
                     <input
                         type="text"
                         value={newCategoryName}
                         onChange={(e) => setNewCategoryName(e.target.value)}
                         placeholder="카테고리 이름"
+                        style={{ width: '200px' }} // 고정된 너비 설정
                     />
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}> {/* 버튼만 중앙 정렬 */}
                     <button onClick={handleAddCategory}>저장</button>
                     <button onClick={() => setShowAddModal(false)}>취소</button>
+                    </div>
                 </div>
             )}
             <table>
                 <thead>
                 <tr>
-                    <th>카테고리 이름</th>
-                    <th>노출 여부</th>
-                    <th>액션</th>
+                    <th className="custom-font1">카테고리 이름</th>
+                    <th className="custom-font1">노출 여부</th>
+                    <th className="custom-font1">액션</th>
                 </tr>
                 </thead>
                 <tbody>
