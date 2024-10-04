@@ -64,6 +64,32 @@ const TimerWrapper = styled.div`
     color: ${({ theme }) => theme.timerColor};
 `;
 
+const AgeNoticePopup = styled.div`
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #f0f8ff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    width: 300px;
+    z-index: 1000;
+`;
+
+const CloseButton = styled.button`
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+    &:hover {
+        background-color: #0056b3;
+    }
+`;
+
 const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dispatch<React.SetStateAction<boolean>> }> = ({ isHighContrast, setIsHighContrast }) => {
     const authContext = useContext(AuthContext);
     const location = useLocation();
@@ -82,6 +108,14 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
     const [isWebcamReady, setIsWebcamReady] = useState<boolean>(false);
 
     const navigate = useNavigate();
+    const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
+    const renderAgeNotice = () => {
+        if (age !== null && age >= 60) {
+            setIsPopupVisible(true); // 팝업 표시
+        } else {
+            setIsPopupVisible(false); // 팝업 숨기기
+        }
+    };
 
     // useEffect(() => {
     //     axios.get(`${API_URL}/api/menus/categories`)
@@ -180,6 +214,7 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
 
     const humanRekognition = async () => {
         if (capturedImage) {
+
             const response = await fetch(capturedImage);
             const blob = await response.blob();
 
@@ -201,6 +236,7 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
 
                 const age = response.data.age;
                 setAge(age);
+                renderAgeNotice();
                 console.log("response_ok")
                 console.log(age)
 
@@ -208,6 +244,10 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
                 console.error("Failed to upload image", error);
             }
         }
+    };
+
+    const handleClosePopup = () => {
+        setIsPopupVisible(false); // 팝업 닫기
     };
 
     const handleProductClick = (product: Product) => {
@@ -396,6 +436,13 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
                         onUserMedia={handleUserMedia}
                     />
                 </div>
+                {isPopupVisible && (
+                    <AgeNoticePopup>
+                        <p>음성 인식이 가능합니다</p>
+                        <p>예시: 따뜻한 아메리카노 한 잔 작은 사이즈로 주문해줘</p>
+                        <CloseButton onClick={handleClosePopup}>닫기</CloseButton>
+                    </AgeNoticePopup>
+                )}
             </HomeWrapper>
         </ThemeProvider>
     );
