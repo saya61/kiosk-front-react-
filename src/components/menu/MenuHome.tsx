@@ -15,6 +15,7 @@ import styled, { ThemeProvider } from 'styled-components';
 import GetRemoteOrder from "../GetRemoteOrder";
 import { lightTheme, highContrastTheme } from '../../themes';
 import Webcam from "react-webcam";
+import MockAdapter from 'axios-mock-adapter';
 
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -64,29 +65,30 @@ const TimerWrapper = styled.div`
     color: ${({ theme }) => theme.timerColor};
 `;
 
-const AgeNoticePopup = styled.div`
+const PopupWrapper = styled.div`
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #f0f8ff;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    padding: 15px;
-    width: 300px;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
     z-index: 1000;
+    width: 300px;
+    text-align: center;
 `;
 
 const CloseButton = styled.button`
-    background-color: #007BFF;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #ff7f7f;
     color: white;
     border: none;
-    padding: 8px 12px;
+    border-radius: 5px;
     cursor: pointer;
-    border-radius: 4px;
-    margin-top: 10px;
     &:hover {
-        background-color: #0056b3;
+        background-color: #ff4c4c;
     }
 `;
 
@@ -102,20 +104,19 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
     const [orderData, setOrderData] = useState<OrderModuleDTO | null>(location.state?.orderData || null);
     const timerRef = useRef<{ resetTimer: () => void }>(null);
     const [age, setAge] = useState<number | null>(null);
-
+    const [showVoiceAssistPopup, setShowVoiceAssistPopup] = useState<boolean>(false);
     const webcamRef = useRef<Webcam>(null);
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
     const [isWebcamReady, setIsWebcamReady] = useState<boolean>(false);
 
     const navigate = useNavigate();
-    const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
-    const renderAgeNotice = () => {
-        if (age !== null && age >= 60) {
-            setIsPopupVisible(true); // 팝업 표시
-        } else {
-            setIsPopupVisible(false); // 팝업 숨기기
-        }
-    };
+
+    // mock 테스트
+    // const mock = new MockAdapter(axios);
+    // const mockRekognitionResponse = {
+    //     age: 65
+    // };
+    // mock.onPost(`${API_URL}/human-rekognition/only_image`).reply(200, mockRekognitionResponse);
 
     // useEffect(() => {
     //     axios.get(`${API_URL}/api/menus/categories`)
@@ -190,6 +191,12 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
 //         }
 //     }, [age]); // age가 업데이트될 때만 실행
 
+    useEffect(() => {
+        if (age && age >= 60) {
+            setShowVoiceAssistPopup(true);
+        }
+    }, [age]);
+
     const capture = useCallback(() => {
         if (webcamRef.current) {
             const imageSrc = webcamRef.current.getScreenshot();
@@ -208,13 +215,8 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
         setIsWebcamReady(true);
     };
 
-
-
-
-
     const humanRekognition = async () => {
         if (capturedImage) {
-
             const response = await fetch(capturedImage);
             const blob = await response.blob();
 
@@ -236,7 +238,6 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
 
                 const age = response.data.age;
                 setAge(age);
-                renderAgeNotice();
                 console.log("response_ok")
                 console.log(age)
 
@@ -246,8 +247,8 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
         }
     };
 
-    const handleClosePopup = () => {
-        setIsPopupVisible(false); // 팝업 닫기
+    const handlePopupClose = () => {
+        setShowVoiceAssistPopup(false);
     };
 
     const handleProductClick = (product: Product) => {
@@ -436,12 +437,12 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
                         onUserMedia={handleUserMedia}
                     />
                 </div>
-                {isPopupVisible && (
-                    <AgeNoticePopup>
-                        <p>음성 인식이 가능합니다</p>
-                        <p>예시: 따뜻한 아메리카노 한 잔 작은 사이즈로 주문해줘</p>
-                        <CloseButton onClick={handleClosePopup}>닫기</CloseButton>
-                    </AgeNoticePopup>
+                {showVoiceAssistPopup && (
+                    <PopupWrapper>
+                        <h3>음성 인식이 가능합니다!</h3>
+                        <p>예시: "따뜻한 아메리카노 한 잔 작은 사이즈로 주문해줘"</p>
+                        <CloseButton onClick={handlePopupClose}>닫기</CloseButton>
+                    </PopupWrapper>
                 )}
             </HomeWrapper>
         </ThemeProvider>
