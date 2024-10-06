@@ -1,34 +1,44 @@
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
+import { useNavigate } from 'react-router-dom'; // useNavigate를 추가
 import {
     Arrow,
-    Container, FifthSection, FirstHorizontalContainer,
+    Container,
+    FifthSection,
+    FirstHorizontalContainer,
     FirstSection,
-    FirstSectionButton, FourthSection,
+    FirstSectionButton,
+    FourthSection,
     Header,
-    HorizontalContainer, SecondSection, SecondSectionContent, SecondSectionTitle, ThirdSection,
+    HorizontalContainer,
+    SecondSection,
+    SecondSectionContent,
+    SecondSectionTitle,
+    ThirdSection,
     Title
 } from '../style/onboarding/HomeStyles';
 import NavBar from "./NavBar";
 
 const OnBoardingHome: React.FC = () => {
+    const navigate = useNavigate(); // navigate 훅 사용
     const secondSectionRef = useRef<HTMLDivElement>(null);
 
     const scrollToSecondSection = () => {
-        secondSectionRef.current?.scrollIntoView({behavior: 'smooth'});
+        secondSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
+
     return (
         <Container>
             <Header>
-                <NavBar/>
+                <NavBar />
             </Header>
             <FirstSection>
                 <Title>디지털 취약계층을 위한 웹 키오스크</Title>
                 <Title>AIKiosk로 간편하게 사용하기</Title>
                 <FirstHorizontalContainer>
-                    <FirstSectionButton>사업자 로그인</FirstSectionButton>
-                    <FirstSectionButton>유저 로그인</FirstSectionButton>
+                    <FirstSectionButton onClick={() => navigate('/users/login')}>사업자 로그인</FirstSectionButton>
+                    <FirstSectionButton onClick={() => navigate('/siren/login')}>모바일 주문하기</FirstSectionButton>
                 </FirstHorizontalContainer>
-                <Arrow onClick={scrollToSecondSection}/>
+                <Arrow onClick={scrollToSecondSection} />
             </FirstSection>
             <SecondSection ref={secondSectionRef}>
                 <SecondSectionTitle>간단하게 구성할 수 있는 키오스크 웹 서비스</SecondSectionTitle>
@@ -40,7 +50,6 @@ const OnBoardingHome: React.FC = () => {
                     <Title>화면 강조 기능</Title>
                     <Title>음성 주문 기능</Title>
                 </HorizontalContainer>
-
             </ThirdSection>
             <FourthSection>
                 <HorizontalContainer>
