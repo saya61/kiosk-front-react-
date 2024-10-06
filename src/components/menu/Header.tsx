@@ -1,4 +1,3 @@
-// header.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLoginModal from '../admin/modals/AdminLoginModal';
@@ -14,17 +13,31 @@ const HeaderWrapper = styled.header`
     background-color: ${({ theme }) => theme.headerBgColor};
     color: ${({ theme }) => theme.headerColor};
     padding: 1rem;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 `;
 
 const HomeIcon = styled.div`
     cursor: pointer;
+    font-size: 1.5rem;
 `;
 
 const SettingsIcon = styled.div`
     cursor: pointer;
+    font-size: 1.5rem;
 `;
 
-const Header: React.FC = () => {
+const Title = styled.h1`
+    flex-grow: 1;
+    text-align: center;
+    font-size: 1.8rem;
+`;
+
+interface HeaderProps {
+    title?: string;  // Title 이름 변경(기본값: AI KIOSK)
+}
+
+const Header: React.FC<HeaderProps> = ({ title = 'AI KIOSK' }) => { // title 값 변경으로 각 사이트마다 고유의 이름 가질 수 있음.
     const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -47,7 +60,7 @@ const Header: React.FC = () => {
     return (
         <HeaderWrapper>
             <HomeIcon onClick={handleMainPage}>🏠</HomeIcon>
-            <h1>Easy KIOSK</h1>
+            <h1>{title}</h1>
             <SettingsIcon onClick={handleAdminClick}>⚙️</SettingsIcon>
             {isAdminLoginOpen && <AdminLoginModal onClose={handleAdminLoginClose} />}
         </HeaderWrapper>
