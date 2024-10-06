@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
+import React, {useState, useRef, useContext, useEffect, useCallback} from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from './Header';
@@ -14,6 +14,9 @@ import Modal from 'react-modal';
 import styled, { ThemeProvider } from 'styled-components';
 import GetRemoteOrder from "../GetRemoteOrder";
 import { lightTheme, highContrastTheme } from '../../themes';
+import Webcam from "react-webcam";
+import MockAdapter from 'axios-mock-adapter';
+
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -62,6 +65,33 @@ const TimerWrapper = styled.div`
     color: ${({ theme }) => theme.timerColor};
 `;
 
+const PopupWrapper = styled.div`
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 1000;
+    width: 300px;
+    text-align: center;
+`;
+
+const CloseButton = styled.button`
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #ff7f7f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+        background-color: #ff4c4c;
+    }
+`;
+
 const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dispatch<React.SetStateAction<boolean>> }> = ({ isHighContrast, setIsHighContrast }) => {
     const authContext = useContext(AuthContext);
     const location = useLocation();
@@ -73,9 +103,54 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
     const [currentSelectedProduct, setCurrentSelectedProduct] = useState<Product | null>(null);
     const [orderData, setOrderData] = useState<OrderModuleDTO | null>(location.state?.orderData || null);
     const timerRef = useRef<{ resetTimer: () => void }>(null);
+    const [age, setAge] = useState<number | null>(null);
+    const [showVoiceAssistPopup, setShowVoiceAssistPopup] = useState<boolean>(false);
+    const webcamRef = useRef<Webcam>(null);
+    const [capturedImage, setCapturedImage] = useState<string | null>(null);
+    const [isWebcamReady, setIsWebcamReady] = useState<boolean>(false);
+
     const navigate = useNavigate();
 
+    // mock 테스트
+    // const mock = new MockAdapter(axios);
+    // const mockRekognitionResponse = {
+    //     age: 65
+    // };
+    // mock.onPost(`${API_URL}/human-rekognition/only_image`).reply(200, mockRekognitionResponse); // only_image 실제 백 엔드포인트 대체
+
+    // useEffect(() => {
+    //     axios.get(`${API_URL}/api/menus/categories`)
+    //         .then(response => {
+    //             const updatedCategories = response.data.map((category: CategoryType) => ({
+    //                 ...category,
+    //                 visible: true // 기본적으로 모든 카테고리를 보이도록 설정
+    //             }));
+    //             setCategories(updatedCategories);
+    //             if (updatedCategories.length > 0) {
+    //                 setCurrentCategory(updatedCategories[0].id);
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error('There was an error fetching the categories!', error);
+    //         });
+    //     if (webcamRef.current) {
+    //         setIsWebcamReady(true);
+    //     }
+    //
+    //     if (isWebcamReady) {
+    //         capture();
+    //     }
+    //
+    //     if (capturedImage) {
+    //         humanRekognition();
+    //     }
+    //     if (age) {
+    //         alert(`나이: ${age}`);
+    //     }
+    // }, [capturedImage, isWebcamReady]);
+
     useEffect(() => {
+        // Fetch categories
         axios.get(`${API_URL}/api/menus/categories`)
             .then(response => {
                 const updatedCategories = response.data.map((category: CategoryType) => ({
@@ -90,7 +165,91 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
             .catch(error => {
                 console.error('There was an error fetching the categories!', error);
             });
-    }, []);
+    }, []); // 빈 종속성 배열로 첫 렌더 시 한 번만 실행
+
+// Webcam이 준비되었을 때만 capture를 실행
+    useEffect(() => {
+        if (isWebcamReady) {
+            const timer = setTimeout(() => {
+                capture();
+            }, 1000); // 1초 대기
+            return () => clearTimeout(timer); // 청소 함수
+        }
+    }, [isWebcamReady]);
+
+// capturedImage가 있을 때 humanRekognition 실행
+    useEffect(() => {
+        if (capturedImage) {
+            humanRekognition(); // 캡처된 이미지가 있을 때만 실행
+        }
+    }, [capturedImage]); // capturedImage가 업데이트될 때 실행
+
+// 나이가 설정되었을 때 알림
+//     useEffect(() => {
+//         if (age) {
+//             alert(`나이: ${age}`);
+//         }
+//     }, [age]); // age가 업데이트될 때만 실행
+
+    useEffect(() => {
+        if (age && age >= 60) {
+            setShowVoiceAssistPopup(true);
+        }
+    }, [age]);
+
+    const capture = useCallback(() => {
+        if (webcamRef.current) {
+            const imageSrc = webcamRef.current.getScreenshot();
+            if (imageSrc) {
+                setCapturedImage(imageSrc);
+                console.log("capture ok");
+                console.log(imageSrc);
+            } else {
+                console.log("Failed to capture image");
+            }
+        }
+    }, [webcamRef]);
+
+    const handleUserMedia = () => {
+        console.log("Webcam is ready");
+        setIsWebcamReady(true);
+    };
+
+    const humanRekognition = async () => {
+        if (capturedImage) {
+            const response = await fetch(capturedImage);
+            const blob = await response.blob();
+
+            let now = new Date();
+            let thistime = now.getTime();
+            let fileName = thistime.toString() + ".jpg";
+
+            const file = new File([blob], fileName, { type: "image/jpeg" });
+
+            const formData = new FormData();
+            formData.append("image", file);
+
+            try {
+                const response = await axios.post(`${API_URL}/human-rekognition/only_image`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+
+                const age = response.data.age;
+                setAge(age);
+                console.log("response_ok")
+                console.log(age)
+
+            } catch (error) {
+                console.error("Failed to upload image", error);
+            }
+        }
+    };
+
+    const handlePopupClose = () => {
+        setShowVoiceAssistPopup(false);
+    };
 
     const handleProductClick = (product: Product) => {
         axios.get(`${API_URL}/api/menus/select-custom-option/${product.id}`)
@@ -226,8 +385,8 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
     return (
         <ThemeProvider theme={isHighContrast ? highContrastTheme : lightTheme}>
             <HomeWrapper>
-                <Header />
-                <GetRemoteOrder />
+                <Header/>
+                <GetRemoteOrder/>
                 <Category
                     categories={categories.filter(category => category.visible)}
                     onCategoryClick={handleCategoryClick}
@@ -257,7 +416,7 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
                     onDecreaseQuantity={(productId, options) => handleDecreaseQuantity(productId, options)}
                 />
                 <TimerWrapper>
-                    <Timer ref={timerRef} />
+                    <Timer ref={timerRef}/>
                 </TimerWrapper>
                 <FooterWrapper>
                     <ToggleButton onClick={toggleHighContrast}>Toggle High Contrast</ToggleButton>
@@ -270,6 +429,21 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
                 <div>
                     <h3>현재 키오스크: {authContext?.kioskInfo?.number}</h3>
                 </div>
+                <div style={{position: 'absolute', zIndex: -1, width: '1px', height: '1px', overflow: 'hidden'}}>
+                    <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        onUserMedia={handleUserMedia}
+                    />
+                </div>
+                {showVoiceAssistPopup && (
+                    <PopupWrapper>
+                        <h3>음성 인식이 가능합니다!</h3>
+                        <p>예시: "따뜻한 아메리카노 한 잔 작은 사이즈로 주문해줘"</p>
+                        <CloseButton onClick={handlePopupClose}>닫기</CloseButton>
+                    </PopupWrapper>
+                )}
             </HomeWrapper>
         </ThemeProvider>
     );

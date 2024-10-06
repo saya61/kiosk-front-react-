@@ -117,21 +117,26 @@ const OptionManagement: React.FC = () => {
 
     return (
         <div className="container">
-            <h2>옵션 관리</h2>
+            <head>
+                {/* Google Fonts link */}
+                <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet"/>
+            </head>
+            <h2 className="custom-font">옵션 관리</h2>
             <button className="add-button-right" onClick={() => setShowAddModal(true)}>+ 옵션 추가</button>
             {showAddModal && (
                 <div className="modal">
-                    <h3>옵션 추가</h3>
-                    <h5>옵션 이름</h5>
+                    <h3 className="custom-font">옵션 추가</h3>
+                    <h5 className="custom-font1">옵션 이름</h5>
                     <input
                         type="text"
                         value={newOptionName}
                         onChange={(e) => setNewOptionName(e.target.value)}
                         placeholder="추가할 옵션 이름"
+                        style={{ width: '150px' }} // 고정된 너비 설정
                     />
                     <div>
-                        <h4>상세 옵션 항목 추가</h4>
-                        <h5>상품명</h5>
+                        <h4 className="custom-font1">상세 옵션 항목 추가</h4>
+                        <h5 className="custom-font1">상품명</h5>
                         <select
                             value={newOptionMenuId}
                             onChange={(e) => setNewOptionMenuId(parseInt(e.target.value))}
@@ -141,14 +146,17 @@ const OptionManagement: React.FC = () => {
                                 <option key={menu.id} value={menu.id}>{menu.name}</option>
                             ))}
                         </select>
-                        <h5>옵션 가격</h5>
+                        <h5 className="custom-font1">옵션 가격</h5>
                         <input
                             type="number"
                             value={newItemPrice}
                             onChange={(e) => setNewItemPrice(parseFloat(e.target.value))}
                             placeholder="옵션 가격"
+                            style={{ width: '200px' }} // 고정된 너비 설정
                         />
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}> {/* 버튼만 중앙 정렬 */}
                         <button onClick={handleAddItemToOption}>항목 추가</button>
+                        </div>
                     </div>
                     <div>
                         {newOptionItems.map((item, index) => (
@@ -157,12 +165,14 @@ const OptionManagement: React.FC = () => {
                             </div>
                         ))}
                     </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}> {/* 버튼만 중앙 정렬 */}
                     <button onClick={handleAddOption}>저장</button>
                     <button onClick={handleCloseModal}>취소</button>
+                    </div>
                 </div>
             )}
             <div>
-                <label>정렬 기준: </label>
+                <label className="custom-font">정렬 기준: </label>
                 <select value={sortKey} onChange={(e) => setSortKey(e.target.value as 'id' | 'menuName')}>
                     <option value="id">옵션 ID</option>
                     <option value="menuName">상품명</option>
@@ -171,10 +181,10 @@ const OptionManagement: React.FC = () => {
             <table>
                 <thead>
                 <tr>
-                    <th>상품명</th>
-                    <th>적용된 옵션</th>
-                    <th>가격</th>
-                    <th>액션</th>
+                    <th className="custom-font1">상품명</th>
+                    <th className="custom-font1">적용된 옵션</th>
+                    <th className="custom-font1">가격</th>
+                    <th className="custom-font1">액션</th>
                 </tr>
                 </thead>
                 <tbody>

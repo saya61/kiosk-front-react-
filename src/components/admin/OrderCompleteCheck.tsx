@@ -80,15 +80,20 @@ const OrderCompleteCheck = () => {
     // OrderCompleteCheck.tsx - 한국어로 변환된 코드
     return (
         <div className="container">
-            <h1>주문 확인</h1>
+            <head>
+                {/* Google Fonts link */}
+                <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap"
+                      rel="stylesheet"/>
+            </head>
+            <h1 className="custom-font">주문 확인</h1>
             <table>
                 <thead>
                 <tr>
-                    <th>주문 번호</th>
-                    <th>주문 시간</th>
-                    <th>완료 여부</th>
-                    <th>주문 항목</th>
-                    <th>액션</th>
+                    <th className="custom-font1">주문 번호</th>
+                    <th className="custom-font1">주문 시간</th>
+                    <th className="custom-font1">완료 여부</th>
+                    <th className="custom-font1">주문 항목</th>
+                    <th className="custom-font1">액션</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -109,7 +114,8 @@ const OrderCompleteCheck = () => {
                             </ul>
                         </td>
                         <td>
-                            <button onClick={() => completeOrder(orderComplete.orderId)} disabled={orderComplete.complete || loading}>
+                            <button onClick={() => completeOrder(orderComplete.orderId)}
+                                    disabled={orderComplete.complete || loading}>
                                 {orderComplete.complete ? "완료됨" : "주문 완료 처리"}
                             </button>
                         </td>

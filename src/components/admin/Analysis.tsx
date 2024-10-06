@@ -39,8 +39,14 @@ const Analysis: React.FC = () => {
 
     return (
         <div>
-            <h1>분석 결과</h1>
-            <pre>{data}</pre> {/* 결과를 문자열로 출력 */}
+            <head>
+                {/* Google Fonts link */}
+                <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap"
+                      rel="stylesheet"/>
+            </head>
+            <h1 className="custom-font">분석 결과</h1>
+            <pre>{data}</pre>
+            {/* 결과를 문자열로 출력 */}
         </div>
     );
 };
