@@ -116,7 +116,7 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
     // const mockRekognitionResponse = {
     //     age: 65
     // };
-    // mock.onPost(`${API_URL}/human-rekognition/only_image`).reply(200, mockRekognitionResponse);
+    // mock.onPost(`${API_URL}/human-rekognition/only_image`).reply(200, mockRekognitionResponse); // only_image 실제 백 엔드포인트 대체
 
     // useEffect(() => {
     //     axios.get(`${API_URL}/api/menus/categories`)
