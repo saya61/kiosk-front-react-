@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import axios from "axios";
 import './GuardPage.css';
+import './Webfont.css'
 
 interface Image {
     url: string;
 }
-import './Webfont.css'
 
 const GuardPage: React.FC = () => {
     const navigate = useNavigate();
