@@ -1,6 +1,7 @@
 import React from 'react';
 import { Product } from '../../types';
 import styled from 'styled-components';
+import './Menu.css'
 
 interface ProductCardProps {
     product: Product;
@@ -29,10 +30,15 @@ const ProductImage = styled.img`
 const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
     return (
         <ProductCardWrapper onClick={onClick}>
-            <ProductImage src={product.imageUrl} alt={product.name} />
-            <h2>{product.name}</h2>
-            <p>{product.price}원</p>
-            <p>{product.description}</p>
+            <head>
+                {/* Google Fonts link */}
+                <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap"
+                      rel="stylesheet"/>
+            </head>
+            <ProductImage src={product.imageUrl} alt={product.name}/>
+            <h2 className="custom-font">{product.name}</h2>
+            <p className="custom-font1">{product.price}원</p>
+            <p className="custom-font1">{product.description}</p>
         </ProductCardWrapper>
     );
 }

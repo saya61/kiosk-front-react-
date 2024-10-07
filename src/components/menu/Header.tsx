@@ -4,6 +4,7 @@ import AdminLoginModal from '../admin/modals/AdminLoginModal';
 import styled from 'styled-components';
 import {CrossIcon} from "react-select/dist/declarations/src/components/indicators";
 import {Button} from "../style/PaymentPageStyles";
+import './Menu.css'
 
 const HeaderWrapper = styled.header`
     grid-area: header;
@@ -60,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({ title = 'AI KIOSK' }) => { // title 값
     return (
         <HeaderWrapper>
             <HomeIcon onClick={handleMainPage}>🏠</HomeIcon>
-            <h1>{title}</h1>
+            <h1 className="custom-font">{title}</h1>
             <SettingsIcon onClick={handleAdminClick}>⚙️</SettingsIcon>
             {isAdminLoginOpen && <AdminLoginModal onClose={handleAdminLoginClose} />}
         </HeaderWrapper>

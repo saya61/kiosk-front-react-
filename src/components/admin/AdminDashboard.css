@@ -50,3 +50,13 @@
         padding: 10px;
     }
 }
+
+.custom-font {
+    font-family: 'Nanum Gothic', sans-serif;
+    font-weight: 800;
+}
+
+.custom-font1 {
+    font-family: 'Nanum Gothic', sans-serif;
+    font-weight: 400;
+}

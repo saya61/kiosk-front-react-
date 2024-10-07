@@ -17,24 +17,29 @@ import Analysis from "./Analysis";
 const AdminDashboard: React.FC = () => {
     return (
         <div className="admin-dashboard">
+            <head>
+                {/* Google Fonts link */}
+                <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap"
+                      rel="stylesheet"/>
+            </head>
             <nav className="admin-sidebar">
                 <ul>
-                    <li><Link to="/admin/category">카테고리 관리</Link></li>
-                    <li><Link to="/admin/option">옵션 관리</Link></li>
-                    <li><Link to="/admin/product">상품 관리</Link></li>
-                    <li><Link to="/admin/payment">주문 환불</Link></li>
-                    <li><Link to={`/admin/orderComplete`}>주문 확인</Link></li>
-                    <li><Link to="/admin/analysis">가게 분석</Link></li>
+                    <li className="custom-font1"><Link to="/admin/category">카테고리 관리</Link></li>
+                    <li className="custom-font1"><Link to="/admin/option">옵션 관리</Link></li>
+                    <li className="custom-font1"><Link to="/admin/product">상품 관리</Link></li>
+                    <li className="custom-font1"><Link to="/admin/payment">주문 환불</Link></li>
+                    <li className="custom-font1"><Link to={`/admin/orderComplete`}>주문 확인</Link></li>
+                    <li className="custom-font1"><Link to="/admin/analysis">가게 분석</Link></li>
                 </ul>
             </nav>
             <div className="admin-content">
                 <Routes>
-                    <Route path="category" element={<CategoryManagement />} />
-                    <Route path="option" element={<OptionManagement />} />
-                    <Route path="product" element={<ProductManagement />} />
-                    <Route path="payment" element={<RefundManagement />} />
-                    <Route path="orderComplete" element={<OrderCompleteCheck />} />
-                    <Route path="analysis" element={<Analysis />} />
+                    <Route path="category" element={<CategoryManagement/>}/>
+                    <Route path="option" element={<OptionManagement/>}/>
+                    <Route path="product" element={<ProductManagement/>}/>
+                    <Route path="payment" element={<RefundManagement/>}/>
+                    <Route path="orderComplete" element={<OrderCompleteCheck/>}/>
+                    <Route path="analysis" element={<Analysis/>}/>
                 </Routes>
             </div>
         </div>

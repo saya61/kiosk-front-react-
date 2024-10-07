@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import './PasswordModal.css';
+import './Webfont.css'
 
 interface PasswordModalProps {
     isOpen: boolean;
@@ -59,20 +60,20 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
         >
             {isValid ? (
                 <div>
-                    <h2>잔여 포인트: {points}</h2>
+                    <h2 className="custom-font">잔여 포인트: {points}</h2>
                     <div className="phone-and-buttons">
-                        <p>고객 전화번호: {storedPhoneNumber}</p> {/* 추가된 부분 */}
-                        <button className="modal-submit-button" onClick={() => { handleUsePoints(); onRequestClose(); }}>
+                        <p className="custom-font1">고객 전화번호: {storedPhoneNumber}</p> {/* 추가된 부분 */}
+                        <button className="modal-submit-button custom-font1" onClick={() => { handleUsePoints(); onRequestClose(); }}>
                             포인트 사용
                         </button>
-                        <button className="modal-submit-button" onClick={() => { handleSkipPoints(); onRequestClose(); }}>
+                        <button className="modal-submit-button custom-font1" onClick={() => { handleSkipPoints(); onRequestClose(); }}>
                             포인트 사용 안함
                         </button>
                     </div>
                 </div>
             ) : (
                 <div>
-                    <h2>비밀번호 입력</h2>
+                    <h2 className="custom-font1">비밀번호 입력</h2>
                     <input
                         type="password"
                         value={password}
@@ -86,12 +87,12 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
                         onChange={handleInputChange}
                         onKeyPress={() => {}}
                     />
-                    <button className="modal-submit-button" onClick={handlePasswordSubmit}>
+                    <button className="modal-submit-button custom-font1" onClick={handlePasswordSubmit}>
                         다음
                     </button>
                 </div>
             )}
-            <button className="modal-close-button" onClick={onRequestClose}>
+            <button className="modal-close-button custom-font1" onClick={onRequestClose}>
                 닫기
             </button>
         </Modal>
