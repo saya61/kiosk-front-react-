@@ -56,14 +56,20 @@ const KioskSelectionPage: React.FC = () => {
         const fetchKiosks = async () => {
             try {
                 const adminId = localStorage.getItem('adminId');
-                const token = localStorage.getItem('token')
+                const storeId = localStorage.getItem('storeId'); // storeId 추가
+                const token = localStorage.getItem('token');
+
                 console.log(token);
                 console.log('adminId:', adminId);
-                if (!adminId) {
-                    console.error('No adminId found in localStorage');
+                console.log('storeId:', storeId); // storeId 확인
+
+                if (!adminId || !storeId) { // 둘 중 하나가 없다면
+                    console.error('No adminId or storeId found in localStorage');
                     return;
                 }
-                const response = await axios.get(`${API_URL}/api/kiosks/${adminId}/kiosks`);
+
+                // storeId를 사용하여 키오스크를 가져오는 API 호출
+                const response = await axios.get(`${API_URL}/api/kiosks/${adminId}/${storeId}/kiosks`);
                 console.log('Fetched kiosks:', response.data);
                 setKiosks(response.data);
             } catch (error) {

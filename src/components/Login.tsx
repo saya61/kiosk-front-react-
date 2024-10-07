@@ -69,13 +69,14 @@ const Login: React.FC = () => {
             // authContext?.login(accessToken);
             localStorage.setItem('token', accessToken);
             authContext?.setRefreshToken(refreshToken);
-            localStorage.setItem('adminId', adminId.toString());
+            localStorage.setItem('adminId', adminId);
             localStorage.setItem('adminPassword', password);
 
             const storeInfo = await fetchStoreInfo(adminId);
             authContext?.setStoreInfo(storeInfo);
 
-            navigate('/kiosk-selection');
+            navigate('/store-selection');
+            console.log('Admin ID:', localStorage.getItem('adminId'));
         } catch (err) {
             setError('Invalid name or password');
         }
@@ -99,6 +100,7 @@ const Login: React.FC = () => {
             />
             <Button onClick={handleLogin}>로그인</Button>
             <SignUpLink to="/sign_up">계정이 없으신가요? 회원가입</SignUpLink>
+            <SignUpLink to="/sign_upc">계정이 없으신가요? 회원가입2</SignUpLink>
         </LoginContainer>
     );
 };
