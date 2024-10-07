@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import OrderWithGpt from "../context/OrderWithGpt";
 
 interface Kiosk {
     id: number;
@@ -96,6 +97,7 @@ const KioskSelectionPage: React.FC = () => {
                     </KioskItem>
                 ))}
             </KioskList>
+            <OrderWithGpt/>
         </Container>
     );
 };
