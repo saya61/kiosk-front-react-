@@ -132,7 +132,7 @@ const OptionManagement: React.FC = () => {
                         value={newOptionName}
                         onChange={(e) => setNewOptionName(e.target.value)}
                         placeholder="추가할 옵션 이름"
-                        style={{ width: '150px' }} // 고정된 너비 설정
+                        style={{ width: '200px' }} // 고정된 너비 설정
                     />
                     <div>
                         <h4 className="custom-font1">상세 옵션 항목 추가</h4>
@@ -140,6 +140,7 @@ const OptionManagement: React.FC = () => {
                         <select
                             value={newOptionMenuId}
                             onChange={(e) => setNewOptionMenuId(parseInt(e.target.value))}
+                            style={{ width: '280px' }}
                         >
                             <option value={0}>상품 선택</option>
                             {menus.map(menu => (
@@ -173,7 +174,7 @@ const OptionManagement: React.FC = () => {
             )}
             <div>
                 <label className="custom-font">정렬 기준: </label>
-                <select value={sortKey} onChange={(e) => setSortKey(e.target.value as 'id' | 'menuName')}>
+                <select value={sortKey} onChange={(e) => setSortKey(e.target.value as 'id' | 'menuName')} style={{ width: '100px' }}>
                     <option value="id">옵션 ID</option>
                     <option value="menuName">상품명</option>
                 </select>

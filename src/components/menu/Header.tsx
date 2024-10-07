@@ -5,6 +5,7 @@ import AdminLoginModal from '../admin/modals/AdminLoginModal';
 import styled from 'styled-components';
 import {CrossIcon} from "react-select/dist/declarations/src/components/indicators";
 import {Button} from "../style/PaymentPageStyles";
+import './Menu.css'
 
 const HeaderWrapper = styled.header`
     grid-area: header;
@@ -47,7 +48,7 @@ const Header: React.FC = () => {
     return (
         <HeaderWrapper>
             <HomeIcon onClick={handleMainPage}>🏠</HomeIcon>
-            <h1>Easy KIOSK</h1>
+            <h1 className="custom-font">Easy KIOSK</h1>
             <SettingsIcon onClick={handleAdminClick}>⚙️</SettingsIcon>
             {isAdminLoginOpen && <AdminLoginModal onClose={handleAdminLoginClose} />}
         </HeaderWrapper>

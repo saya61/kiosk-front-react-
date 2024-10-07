@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useImperativeHandle, forwardRef, Ref } from 'react';
 import styled from 'styled-components';
+import './Menu.css'
 
 interface TimerProps {
     onTimeUp?: () => void;
@@ -34,8 +35,8 @@ const Timer = forwardRef((props: TimerProps, ref: Ref<{ resetTimer: () => void }
 
     return (
         <TimerWrapper>
-            <h2>남은시간</h2>
-            <p>{timeLeft}초</p>
+            <h2 className="custom-font">남은시간</h2>
+            <p className="custom-font1">{timeLeft}초</p>
         </TimerWrapper>
     );
 });
