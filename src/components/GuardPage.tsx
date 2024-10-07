@@ -1,8 +1,8 @@
 import React, {useEffect, useContext, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import './GuardPage.css';
 import axios from "axios";
+import './GuardPage.css';
 
 interface Image {
     url: string;
