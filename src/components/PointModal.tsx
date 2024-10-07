@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import './PointModal.css';
+import './Webfont.css'
 
 interface PointModalProps {
     isOpen: boolean;
@@ -48,14 +49,14 @@ const PointModal: React.FC<PointModalProps> = ({
             className="custom-modal"
             overlayClassName="custom-overlay"
         >
-            <h2>적립 전화번호 검색</h2>
+            <h2 className="custom-font">적립 전화번호 검색</h2>
             <div className="input-container">
                 <input
                     type="text"
                     value={searchInput}
                     onChange={(e) => handleChange(e.target.value)}
                     placeholder="전화번호 입력"
-                    className="custom-input"
+                    className="custom-input custom-font1"
                 />
             </div>
             <Keyboard
@@ -64,7 +65,7 @@ const PointModal: React.FC<PointModalProps> = ({
                 onChange={handleChange}
                 onKeyPress={() => {}}
             />
-            <button className="modal-close-button" onClick={onRequestClose}>
+            <button className="modal-close-button custom-font1" onClick={onRequestClose}>
                 닫기
             </button>
         </Modal>

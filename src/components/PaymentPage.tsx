@@ -24,7 +24,7 @@ import PointModal from './PointModal';
 import PasswordModal from './PasswordModal';
 import Webcam from 'react-webcam';
 import * as PortOne from "@portone/browser-sdk/v2";
-
+import './Webfont.css'
 
 
 
@@ -526,20 +526,20 @@ const PaymentPage: React.FC = () => {
     return (
         <PaymentPageWrapper>
             <PaymentHeader>
-                <GoBackButton onClick={handleGoBack}>뒤로가기</GoBackButton>주문목록
+                <GoBackButton className='custom-font' onClick={handleGoBack}>뒤로가기</GoBackButton>주문목록
             </PaymentHeader>
             <PaymentContent>
                 <OrderList>
                     {currentProducts.map(product => (
                         <ProductItem key={product.id}>
                             <ProductInfo>
-                            <h3>{product.name}</h3>
-                            <p>가격: {product.price}원</p>
-                            <p>수량: {product.quantity}</p>
+                            <h3 className='custom-font'>{product.name}</h3>
+                            <p className='custom-font1'>가격: {product.price}원</p>
+                            <p className='custom-font1'>수량: {product.quantity}</p>
                             </ProductInfo>
                             <OptionBox>
                                 {product.options.map(option => (
-                                    <p key={option.id}>옵션: {option.name} (+{option.additionalPrice}원)</p>
+                                    <p className='custom-font1' key={option.id}>옵션: {option.name} (+{option.additionalPrice}원)</p>
                                 ))}
                             </OptionBox>
                         </ProductItem>
@@ -550,6 +550,7 @@ const PaymentPage: React.FC = () => {
                         selected={isPackaged === false}
                         onClick={() => handlePackagedClick(false)}
                         highlight={highlightButtons && isPackaged === undefined}
+                        className='custom-font'
                     >
                         먹고가기
                     </Button>
@@ -557,31 +558,32 @@ const PaymentPage: React.FC = () => {
                         selected={isPackaged === true}
                         onClick={() => handlePackagedClick(true)}
                         highlight={highlightButtons && isPackaged === undefined}
+                        className='custom-font'
                     >
                         포장하기
                     </Button>
-                    <Button onClick={handlePointModalOpen}>
+                    <Button onClick={handlePointModalOpen} className='custom-font'>
                         포인트 적립 및 사용
                     </Button>
-                    <Button onClick={handleTestButtonClick}>
+                    <Button onClick={handleTestButtonClick} className='custom-font'>
                         테스트
                     </Button>
                 </PaymentOptions>
             </PaymentContent>
 
             <PaginationWrapper>
-                <PageButton onClick={handlePreviousPage} disabled={currentPage === 1}>
+                <PageButton onClick={handlePreviousPage} disabled={currentPage === 1} className='custom-font1'>
                     이전
                 </PageButton>
-                <span>{currentPage} / {Math.ceil(selectedProducts.length / productsPerPage)}</span>
-                <PageButton onClick={handleNextPage} disabled={currentPage === Math.ceil(selectedProducts.length / productsPerPage)}>
+                <span className='custom-font'>{currentPage} / {Math.ceil(selectedProducts.length / productsPerPage)}</span>
+                <PageButton onClick={handleNextPage} disabled={currentPage === Math.ceil(selectedProducts.length / productsPerPage)} className='custom-font1'>
                     다음
                 </PageButton>
             </PaginationWrapper>
 
             <PaymentFooter>
-                <TotalAmount>결제 금액: {finalTotalPrice}원</TotalAmount>
-                <PaymentButton onClick={requestPay} disabled={!isScriptLoaded}>
+                <TotalAmount className='custom-font'>결제 금액: {finalTotalPrice}원</TotalAmount>
+                <PaymentButton onClick={requestPay} disabled={!isScriptLoaded} className='custom-font'>
                     결제하기
                 </PaymentButton>
             </PaymentFooter>
