@@ -14,6 +14,9 @@ RUN npm install -g serve
 # 나머지 애플리케이션 파일 복사
 COPY . .
 
+# .env 파일에서 'http://localhost:8080'을 'https://api.aikiosk.shop'으로 변경
+RUN sed -i 's|http://localhost:8080|https://api.aikiosk.shop|g' .env
+
 # 애플리케이션 빌드
 RUN npm run build
 

@@ -6,6 +6,7 @@ import { lightTheme, highContrastTheme } from './themes';
 import Login from './components/Login';
 import MenuHome from './components/menu/MenuHome';
 import SignUp from './components/SignUp';
+import SignUpC from './components/SignUpC';
 import PaymentPage from './components/PaymentPage';
 import KioskSelectionPage from './components/KioskSelectionPage';
 import GuardPage from './components/GuardPage';
@@ -15,6 +16,7 @@ import SirenHomePage from "./components/siren/SirenHomePage";
 import SirenLoginPage from "./components/siren/SirenLoginPage";
 import SirenRegisterPage from "./components/siren/SirenRegisterPage";
 import SirenLocationSelectionPage from "./components/siren/SirenLocationSelectionPage";
+import StoreSelectionPage from "./components/StoreSelectionPage";
 import OnBoardingHome from "./components/onboarding/OnBoardingHome";
 
 
@@ -29,7 +31,10 @@ const App: React.FC = () => {
 
                     <Route path="/users/login" element={<Login />} />
                     <Route path="/sign_up" element={<SignUp />} />
-                    <Route path="/kiosk-selection" element={<KioskSelectionPage />} />
+                    <Route path="/sign_upc" element={<SignUpC />} />
+                    {/*<Route path="/kiosk-selection" element={<KioskSelectionPage />} />*/}
+                    <Route path="/kiosks/:id" element={<KioskSelectionPage />} />
+                    <Route path="/store-selection" element={<StoreSelectionPage />} />
                     <Route path="/menu" element={<MenuHome isHighContrast={isHighContrast} setIsHighContrast={setIsHighContrast} />} />
                     <Route path="/payment" element={<PaymentPage />} />
                     <Route path="/guard" element={<GuardPage />} />

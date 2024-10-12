@@ -75,7 +75,7 @@ const CategoryManagement: React.FC = () => {
                         value={newCategoryName}
                         onChange={(e) => setNewCategoryName(e.target.value)}
                         placeholder="카테고리 이름"
-                        style={{ width: '200px' }} // 고정된 너비 설정
+                        style={{ width: '300px' }} // 고정된 너비 설정
                     />
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}> {/* 버튼만 중앙 정렬 */}
                     <button onClick={handleAddCategory}>저장</button>

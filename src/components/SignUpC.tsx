@@ -57,29 +57,36 @@ const LoginLink = styled(Link)`
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const SignUp: React.FC = () => {
+const SignUpC: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [email, setEmail] = useState<string>('');
+    const [storeName, setStoreName] = useState<string>('');
+    const [storeLocation, setStoreLocation] = useState<string>('');
+    const [kioskNumber, setKioskNumber] = useState<string>('');
+    const [role, setRole] = useState<string>('');  // New role state
+
     const [message, setMessage] = useState<string | null>(null);
     const navigate = useNavigate();
 
     const handleSignUp = async () => {
         try {
-            await axios.post(`${API_URL}/api/kk/kiosk/sign_up`, {
+            await axios.post(`${API_URL}/api/kk/kiosk/sign_up2`, {
                 name: username,
                 password,
-                email
+                email,
+                storeName,
+                storeLocation,
+                kioskNumber,
+                role,
             });
             setMessage('Sign up successful');
             navigate('/login');
         } catch (err) {
             if (err instanceof Error) {
-                // Error 객체의 속성에 접근할 수 있음
                 console.error('Error details:', err.message);
                 setMessage('Sign up failed');
             } else {
-                // 에러가 Error 객체가 아닌 경우를 처리
                 console.error('Unexpected error:', err);
                 setMessage('Sign up failed');
             }
@@ -90,6 +97,7 @@ const SignUp: React.FC = () => {
         <SignUpContainer>
             <Title>회원가입</Title>
             {message && <Message isSuccess={message === 'Sign up successful'}>{message}</Message>}
+
             <Input
                 type="text"
                 placeholder="아이디"
@@ -108,10 +116,35 @@ const SignUp: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
             />
+            <Input
+                type="text"
+                placeholder="스토어 이름"
+                value={storeName}
+                onChange={(e) => setStoreName(e.target.value)}
+            />
+            <Input
+                type="text"
+                placeholder="스토어 위치"
+                value={storeLocation}
+                onChange={(e) => setStoreLocation(e.target.value)}
+            />
+            <Input
+                type="text"
+                placeholder="키오스크 번호"
+                value={kioskNumber}
+                onChange={(e) => setKioskNumber(e.target.value)}
+            />
+            <Input
+                type="text"
+                placeholder="역할 (admin - 0 /customer - 1)"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+            />
+
             <Button onClick={handleSignUp}>회원가입</Button>
             <LoginLink to="/login">로그인 페이지로 돌아가기</LoginLink>
         </SignUpContainer>
     );
 };
 
-export default SignUp;
+export default SignUpC;

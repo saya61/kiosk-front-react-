@@ -1,6 +1,7 @@
 import React from 'react';
 import { Product } from '../../types';
 import styled from 'styled-components';
+import './Menu.css'
 
 interface ProductCardProps {
     product: Product;
@@ -33,6 +34,11 @@ const ProductImage = styled.img<{ age: number | null }>`
 const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, age }) => {
     return (
         <ProductCardWrapper onClick={onClick} age={age}>
+            <head>
+                {/* Google Fonts link */}
+                <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap"
+                      rel="stylesheet"/>
+            </head>
             <ProductImage src={product.imageUrl} alt={product.name} age={age} />
             <h2 style={{ fontSize: age && age > 60 ? '2rem' : '1rem' }}>{product.name}</h2>
             <p style={{ fontSize: age && age > 60 ? '1.5rem' : '1rem' }}>{product.price}원</p>

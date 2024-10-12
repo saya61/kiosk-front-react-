@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import axios from '../api/axiosConfig';
 import { CustomOption, Product } from '../types';
 import styled from 'styled-components';
+import './Webfont.css'
 
 interface CustomOptionModalProps {
     isOpen: boolean;
@@ -122,18 +123,18 @@ const CustomOptionModal: React.FC<CustomOptionModalProps> = ({
     return (
         <Modal isOpen={isOpen} onRequestClose={handleCancel} contentLabel="Custom Options">
             <ModalContent>
-                <h2>추가 옵션 선택</h2>
+                <h2 className="custom-font">추가 옵션 선택</h2>
                 <OptionsContainer>
                     {options.filter(opt => opt.name !== 'SIZE').map(option => (
                         <OptionItem key={option.id}>
-                            <OptionName>{option.name}</OptionName>
-                            <OptionPrice>{option.additionalPrice}원</OptionPrice>
+                            <OptionName className="custom-font1">{option.name}</OptionName>
+                            <OptionPrice className="custom-font1">{option.additionalPrice}원</OptionPrice>
                             {option.name.includes('추가') ? (
                                 <>
-                                    <OptionQuantity>수량: {selectedOptions[option.id] || 0}</OptionQuantity>
+                                    <OptionQuantity className="custom-font1">수량: {selectedOptions[option.id] || 0}</OptionQuantity>
                                     <OptionButtonGroup>
-                                        <OptionButton onClick={() => handleAddOption(option)}>추가</OptionButton>
-                                        <OptionButton onClick={() => handleRemoveOption(option)}>제거</OptionButton>
+                                        <OptionButton className="custom-font1" onClick={() => handleAddOption(option)}>추가</OptionButton>
+                                        <OptionButton className="custom-font1" onClick={() => handleRemoveOption(option)}>제거</OptionButton>
                                     </OptionButtonGroup>
                                 </>
                             ) : (
@@ -149,7 +150,7 @@ const CustomOptionModal: React.FC<CustomOptionModalProps> = ({
                     ))}
                     {sizeOptionsAvailable && (
                         <SizeOptionsContainer>
-                            <h3>사이즈 선택</h3>
+                            <h3 className="custom-font">사이즈 선택</h3>
                             {['large', 'medium', 'small'].map(size => {
                                 const additionalPrice = getSizeAdditionalPrice(size);
                                 return (
@@ -162,8 +163,8 @@ const CustomOptionModal: React.FC<CustomOptionModalProps> = ({
                                             checked={selectedSize === size}
                                             onChange={() => handleSizeChange(size)}
                                         />
-                                        <label htmlFor={size}>{size}</label>
-                                        <span>{additionalPrice}원</span>
+                                        <label htmlFor={size} className="custom-font">{size}</label>
+                                        <span className="custom-font1">{additionalPrice}원</span>
                                     </SizeOptionItem>
                                 );
                             })}
@@ -171,11 +172,11 @@ const CustomOptionModal: React.FC<CustomOptionModalProps> = ({
                     )}
                 </OptionsContainer>
                 <TotalPrice>
-                    <strong>총 가격: {totalPrice}원</strong>
+                    <strong className="custom-font">총 가격: {totalPrice}원</strong>
                 </TotalPrice>
                 <ButtonGroup>
-                    <ModalButton onClick={handleClose}>완료</ModalButton>
-                    <ModalButton onClick={handleCancel}>취소</ModalButton>
+                    <ModalButton  className="custom-font1" onClick={handleClose}>완료</ModalButton>
+                    <ModalButton  className="custom-font1" onClick={handleCancel}>취소</ModalButton>
                 </ButtonGroup>
             </ModalContent>
         </Modal>

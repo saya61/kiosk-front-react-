@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Product, CustomOption } from '../../types';
 import styled from 'styled-components';
+import './Menu.css'
 
 interface SelectedItemsProps {
     selectedProducts: Product[];
@@ -112,12 +113,12 @@ const SelectedItems: React.FC<SelectedItemsProps> = ({
 
     return (
         <SelectedItemsWrapper age={age}>
-            <h2>Selected Products</h2>
+            <h2 className="custom-font">Selected Products</h2>
             <ItemsGrid age={age}>
                 {currentPageProducts.map((product, index) => (
                     <div key={index}>
                         <ItemDetails>
-                            <ItemName>{product.name} - {product.price}원 (수량: {product.quantity})</ItemName>
+                            <ItemName className="custom-font1">{product.name} - {product.price}원 (수량: {product.quantity})</ItemName>
                             <QuantityControls>
                                 <button onClick={() => onIncreaseQuantity(product.id, product.options)}>+</button>
                                 <button onClick={() => onDecreaseQuantity(product.id, product.options)}>-</button>
@@ -138,8 +139,9 @@ const SelectedItems: React.FC<SelectedItemsProps> = ({
             </ItemsGrid>
 
             <TotalPrice>
-                <strong>Total Price: {totalPrice}원</strong>
+                <strong className="custom-font">Total Price: {totalPrice}원</strong>
             </TotalPrice>
+            <button onClick={onClear} className="custom-font1">전체삭제</button>
 
             <PaginationWrapper>
                 <PaginationButton

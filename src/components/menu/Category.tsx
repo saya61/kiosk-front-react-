@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Category as CategoryType } from '../../types';
 import styled from 'styled-components';
+import './Menu.css'
 
 interface CategoryProps {
     categories: CategoryType[];

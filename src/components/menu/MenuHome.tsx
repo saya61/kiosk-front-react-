@@ -18,6 +18,7 @@ import Webcam from "react-webcam";
 import MockAdapter from 'axios-mock-adapter';
 import {Button} from "../style/PaymentPageStyles";
 
+import './Menu.css'
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -396,6 +397,11 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
 
     return (
         <ThemeProvider theme={isHighContrast ? highContrastTheme : lightTheme}>
+            <head>
+                {/* Google Fonts link */}
+                <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap"
+                      rel="stylesheet"/>
+            </head>
             <HomeWrapper age={age}>
                 <Header/>
                 <GetRemoteOrder/>
@@ -442,7 +448,7 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
                     />
                 </FooterWrapper>
                 <div>
-                    <h3>현재 키오스크: {authContext?.kioskInfo?.number}</h3>
+                    <h3 className="custom-font1">현재 키오스크: {authContext?.kioskInfo?.number}</h3>
                 </div>
                 <div style={{position: 'absolute', zIndex: -1, width: '1px', height: '1px', overflow: 'hidden'}}>
                     <Webcam
