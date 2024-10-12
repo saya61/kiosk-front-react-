@@ -16,26 +16,34 @@ import GetRemoteOrder from "../GetRemoteOrder";
 import { lightTheme, highContrastTheme } from '../../themes';
 import Webcam from "react-webcam";
 import MockAdapter from 'axios-mock-adapter';
+import {Button} from "../style/PaymentPageStyles";
 
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 Modal.setAppElement('#root');
 
-const HomeWrapper = styled.div`
+const HomeWrapper = styled.div<{ age: number | null }>`
+    max-height: 1920px;
     display: grid;
+    overflow: hidden;
     grid-template-areas:
-    "header"
-    "category"
-    "products"
-    "selected"
-    "timer"
-    "footer";
+        "header"
+        "category"
+        "products"
+        "selected"
+        "timer"
+        "footer";
     gap: 1rem;
-    padding: 1rem;
     background-color: ${({ theme }) => theme.bodyBgColor};
     color: ${({ theme }) => theme.bodyColor};
+    
+    font-size: ${({ age }) => (age !== null && age >= 60 ? '1.5rem' : '1rem')};
+    & > :nth-child(2) {
+        padding: ${({ age }) => (age !== null && age >= 60 ? '1rem' : '1rem')};
+    }
 `;
+
 
 const FooterWrapper = styled.div`
     display: grid;
@@ -110,6 +118,8 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
     const [isWebcamReady, setIsWebcamReady] = useState<boolean>(false);
 
     const navigate = useNavigate();
+
+
 
     // mock 테스트
     // const mock = new MockAdapter(axios);
@@ -382,19 +392,23 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
         setIsHighContrast(!isHighContrast);
     };
 
+    const [ttsmodon, setTtsmodon] = useState<boolean>(false);
+
     return (
         <ThemeProvider theme={isHighContrast ? highContrastTheme : lightTheme}>
-            <HomeWrapper>
+            <HomeWrapper age={age}>
                 <Header/>
                 <GetRemoteOrder/>
                 <Category
                     categories={categories.filter(category => category.visible)}
                     onCategoryClick={handleCategoryClick}
+                    age = {age}
                 />
                 {currentCategory && (
                     <ProductList
                         categoryId={currentCategory}
                         onProductClick={handleProductClick}
+                        age={age}
                     />
                 )}
                 {currentMenuId && currentSelectedProduct && (
@@ -414,6 +428,7 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
                     onClear={() => setSelectedProducts([])}
                     onIncreaseQuantity={(productId, options) => handleIncreaseQuantity(productId, options)}
                     onDecreaseQuantity={(productId, options) => handleDecreaseQuantity(productId, options)}
+                    age={age}  // age prop 추가
                 />
                 <TimerWrapper>
                     <Timer ref={timerRef}/>

@@ -14,6 +14,7 @@ const HeaderWrapper = styled.header`
     background-color: ${({ theme }) => theme.headerBgColor};
     color: ${({ theme }) => theme.headerColor};
     padding: 1rem;
+    height: 5vh;
 `;
 
 const HomeIcon = styled.div`

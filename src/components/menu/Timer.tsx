@@ -7,6 +7,7 @@ interface TimerProps {
 
 const TimerWrapper = styled.div`
   grid-area: timer;
+    height: 5vh;
   border: 1px solid ${({ theme }) => theme.timerBorderColor};
   border-radius: 4px;
   padding: 1rem;
