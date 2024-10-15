@@ -14,6 +14,7 @@ const HeaderWrapper = styled.header`
     background-color: ${({ theme }) => theme.headerBgColor};
     color: ${({ theme }) => theme.headerColor};
     padding: 1rem;
+    height: 5vh;
     border-radius: 15px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 `;

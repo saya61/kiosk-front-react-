@@ -17,6 +17,7 @@ import SirenLoginPage from "./components/siren/SirenLoginPage";
 import SirenRegisterPage from "./components/siren/SirenRegisterPage";
 import SirenLocationSelectionPage from "./components/siren/SirenLocationSelectionPage";
 import StoreSelectionPage from "./components/StoreSelectionPage";
+import OnBoardingHome from "./components/onboarding/OnBoardingHome";
 
 
 const App: React.FC = () => {
@@ -26,6 +27,8 @@ const App: React.FC = () => {
         <AuthProvider>
             <ThemeProvider theme={isHighContrast ? highContrastTheme : lightTheme}>
                 <Routes>
+                    <Route path="/" element={<OnBoardingHome />}/>
+
                     <Route path="/users/login" element={<Login />} />
                     <Route path="/sign_up" element={<SignUp />} />
                     <Route path="/sign_upc" element={<SignUpC />} />
