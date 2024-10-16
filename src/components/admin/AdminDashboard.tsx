@@ -7,6 +7,7 @@ import RefundManagement from './RefundManagement';
 import './AdminDashboard.css';
 import OrderCompleteCheck from "./OrderCompleteCheck";
 import Analysis from "./Analysis";
+import GuardImgManagement from "./GuardImgManagement";
 
 /**
  * AdminDashboard 컴포넌트
@@ -30,6 +31,7 @@ const AdminDashboard: React.FC = () => {
                     <li className="custom-font1"><Link to="/admin/payment">주문 환불</Link></li>
                     <li className="custom-font1"><Link to={`/admin/orderComplete`}>주문 확인</Link></li>
                     <li className="custom-font1"><Link to="/admin/analysis">가게 분석</Link></li>
+                    <li className="custom-font1"><Link to="/admin/img">이미지 관리</Link></li>
                 </ul>
             </nav>
             <div className="admin-content">
@@ -40,6 +42,7 @@ const AdminDashboard: React.FC = () => {
                     <Route path="payment" element={<RefundManagement/>}/>
                     <Route path="orderComplete" element={<OrderCompleteCheck/>}/>
                     <Route path="analysis" element={<Analysis/>}/>
+                    <Route path="img" element={<GuardImgManagement/>}/>
                 </Routes>
             </div>
         </div>

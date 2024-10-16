@@ -35,21 +35,6 @@ const RefundManagement: React.FC = () => {
         }
         const order = orders.find(order => order.id === id);
         const paymentUid = order?.paymentUid;
-        /*axios.post(`${iamportHost}/users/getToken`,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                },
-                data: {
-                    "imp_key": "",
-                    "imp_secret": ""
-                }
-            })
-            .then((response) => console.log(response))
-            .catch(err => console.log(err));
-        axios.post(`https://api.iamport.kr/payments/cancel?_token=ef40495dd39d10d51dfb289d9789af246659cc51`,
-            {imp_uid: {paymentUid}})*/
         axios.delete(`${API_URL}/admin/payment/delete`, {params: {id}})
             .then(()=>{
                 setOrders(orders.filter(order => order.id !== id))
