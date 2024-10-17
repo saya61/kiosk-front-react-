@@ -19,8 +19,20 @@ import MockAdapter from 'axios-mock-adapter';
 import {Button} from "../style/PaymentPageStyles";
 
 import './Menu.css'
+import OrderWithGpt from "../../context/OrderWithGpt";
 
 const API_URL = process.env.REACT_APP_API_URL;
+
+const DefaultButtonWrapper = styled.button`
+    background-color: ${({ theme }) => theme.checkoutBgColor};
+    color: ${({ theme }) => theme.checkoutColor};
+    border: none;
+    padding: 1rem;
+    cursor: pointer;
+    &:hover {
+        background-color: ${({ theme }) => theme.checkoutHoverBgColor};
+    }
+`;
 
 Modal.setAppElement('#root');
 
@@ -177,6 +189,15 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
                 console.error('There was an error fetching the categories!', error);
             });
     }, []); // 빈 종속성 배열로 첫 렌더 시 한 번만 실행
+
+    const [showOrderWithGpt, setShowOrderWithGpt] = useState(false);
+
+    useEffect(() => {
+        // 컴포넌트가 마운트될 때 2초 후에 OrderWithGpt 컴포넌트를 보여줌
+        setTimeout(() => {
+            setShowOrderWithGpt(true);
+        }, 2000);
+    }, []);
 
 // Webcam이 준비되었을 때만 capture를 실행
     useEffect(() => {
@@ -393,6 +414,10 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
         setIsHighContrast(!isHighContrast);
     };
 
+    const shutUp = () => {
+        setShowOrderWithGpt(false)
+    }
+
     const [ttsmodon, setTtsmodon] = useState<boolean>(false);
 
     return (
@@ -408,7 +433,7 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
                 <Category
                     categories={categories.filter(category => category.visible)}
                     onCategoryClick={handleCategoryClick}
-                    age = {age}
+                    age={age}
                 />
                 {currentCategory && (
                     <ProductList
@@ -436,9 +461,10 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
                     onDecreaseQuantity={(productId, options) => handleDecreaseQuantity(productId, options)}
                     age={age}  // age prop 추가
                 />
-                <TimerWrapper>
-                    <Timer ref={timerRef}/>
-                </TimerWrapper>
+                {/*<TimerWrapper>*/}
+                {/*    <Timer ref={timerRef}/>*/}
+                {/*</TimerWrapper>*/}
+                <DefaultButtonWrapper onClick={shutUp}>음성 인식 끄기</DefaultButtonWrapper>
                 <FooterWrapper>
                     <ToggleButton onClick={toggleHighContrast}>Toggle High Contrast</ToggleButton>
                     <CheckoutButton
@@ -457,6 +483,9 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
                         screenshotFormat="image/jpeg"
                         onUserMedia={handleUserMedia}
                     />
+                </div>
+                <div>
+                    {showOrderWithGpt && <OrderWithGpt/>}
                 </div>
                 {showVoiceAssistPopup && (
                     <PopupWrapper>

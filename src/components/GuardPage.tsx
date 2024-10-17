@@ -4,6 +4,8 @@ import { AuthContext } from '../context/AuthContext';
 import axios from "axios";
 import './GuardPage.css';
 import './Webfont.css'
+import BackgroundImageComponent from './BackgroundImageComponent';
+import OrderWithGpt from "../context/OrderWithGpt";
 
 interface Image {
     url: string;
@@ -20,7 +22,7 @@ const GuardPage: React.FC = () => {
     useEffect(() => {
         const fetchImg = async () => {
             try {
-                const response = await axios.get(`${API_URL}/api/guardImgs`, {
+                const response = await axios.get(`${API_URL}/admin/img/guardImgs`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -61,17 +63,24 @@ const GuardPage: React.FC = () => {
         <div className="kiosk-main">
             {img? (
                 // 이미지가 있을 때
-                <div>
-                    <img src={img?.url} onClick={() => handleNavigation('/menu')} alt={"이미지 로딩 실패"}/>
-                </div>
+                    <div>
+                        <div className="button-container">
+                            <BackgroundImageComponent imagePath={img.url}/>
+                            <button onClick={() => handleNavigation('/menu')} className="kiosk-button">
+                                주문하기
+                            </button>
+                            {/*<button onClick={() => handleNavigation('/menu')} className="kiosk-button"><OrderWithGpt/></button>*/}
+                        </div>
+                    </div>
             ) : (
                 // 이미지가 없을 때
                 <div>
-                    <h1 className="custom-font">Welcome to Easy KIOSK</h1>
+                <h1 className="custom-font">Welcome to Easy KIOSK</h1>
                     <div className="button-container">
                         <button onClick={() => handleNavigation('/menu')} className="kiosk-button">
                             주문하기
                         </button>
+                        {/*<button onClick={() => handleNavigation('/menu')} className="kiosk-button"><OrderWithGpt/></button>*/}
                     </div>
                 </div>
             )}
