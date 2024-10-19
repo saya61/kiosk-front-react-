@@ -16,28 +16,35 @@ const GuardPage: React.FC = () => {
     const authContext = useContext(AuthContext);
     const [imgs, setImgs] = useState<Image[]>([]);
     const [img, setImg] = useState<Image>();
+    const storedImgs = localStorage.getItem('imgs');
+    const imgList = storedImgs ? JSON.parse(storedImgs) : [];
 
     const API_URL = process.env.REACT_APP_API_URL;
 
+    const fetchImg = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/admin/img/guardImgs`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log('Response data:', response.data);
+            const imgList: Image[] = response.data.map((url: string) => ({url}));
+            localStorage.setItem('imgs', JSON.stringify(imgList));
+            console.log(localStorage.getItem('imgs'));
+            // setImgs(imgList);
+            console.log('Fetched images:', imgList);
+        } catch (error) {
+            console.error('Failed to fetch image', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchImg = async () => {
-            try {
-                const response = await axios.get(`${API_URL}/admin/img/guardImgs`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                console.log('Response data:', response.data);
-                const imgList: Image[] = response.data.map((url: string) => ({url}));
-                setImgs(imgList);
-                console.log('Fetched images:', imgList);
-            } catch (error) {
-                console.error('Failed to fetch image', error);
-            }
-        };
-
+        setImgs(imgList);
         fetchImg();
+    }, []);
 
+    useEffect(() => {
         // GuardPage로 돌아갈 때 usePointSwitch 초기화
         authContext?.setUsePointSwitch(false);
     }, [authContext]);

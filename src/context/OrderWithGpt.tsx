@@ -1,5 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
+import * as PortOne from "@portone/browser-sdk/v2";
+import {OrderModuleDTO, Product} from "../types";
+import {AuthContext} from "./AuthContext";
+import { useNavigate, useLocation } from 'react-router-dom';
+import Webcam from "react-webcam";
 
 interface MenuList{
     name: string;
@@ -11,6 +16,11 @@ interface VoiceInputProps {
 }
 
 const API_URL = process.env.REACT_APP_API_URL;
+
+interface LocationState {
+    orderData: OrderModuleDTO;
+    selectedProducts: Product[];
+}
 
 // 환경 변수를 설정하는 방법 카톡에 있음 확인 바람
 const apiKey = '';
@@ -24,60 +34,6 @@ const url = 'https://api.openai.com/v1/chat/completions';
 if (!apiKey) {
     throw new Error("OPENAI_API_KEY 환경 변수를 설정해야 합니다.");
 }
-
-async function googleTTs(script: string, callback: () => void) {
-    try{
-        const gcpData = {
-            input: {text: script},
-            voice: {
-                languageCode: 'ko-KR',
-                ssmlGender: 'NEUTRAL',
-            },
-            audioConfig: {
-                audioEncoding: 'LINEAR16',
-            },
-        };
-        const response = await fetch(gcpUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(gcpData),
-        });
-        const result = await response.json();
-        const audioContent = result.audioContent;
-        const audio = new Audio(`data:audio/wav;base64,${audioContent}`);
-        return new Promise((resolve) => {
-            audio.onended = () => {
-                callback(); // 오디오 재생이 끝난 후 콜백 함수 실행
-                resolve(true);
-            };
-            audio.play();
-        });
-    }
-    catch(error) {
-        return false;
-    }
-}
-
-
-async function getMenuItems() {
-    try{
-        const response = await axios.get(`${API_URL}/api/menus/menuNameandPrice`)
-        const menuList: MenuList[] = response.data
-        let categoryText = '';
-        for (const menuItem of menuList) {
-            categoryText = categoryText + menuItem.name + ': ' + menuItem.price + '\n';
-        }
-
-        return categoryText;
-    }
-    catch (error) {
-        console.error('메뉴 불러오기 실패', error);
-        return '';
-    }
-}
-
 
 const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
     const menuList = getMenuItems();
@@ -145,6 +101,33 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
             clearTimeout(timeoutId);
             setTimeoutId(null);
         }
+    };
+    
+    // 결제 초기값 생성
+    // @ts-ignore
+    const handleCheckout = (totalPrice:number) => {
+        const adminName = localStorage.getItem('adminId');
+        axios.get(`${API_URL}/api/request_payment/check_out/${adminName}`)
+            .then(response => {
+                const data = response.data;
+                console.log(data);
+                const orderData: OrderModuleDTO = {
+                    id: data.id,
+                    price: totalPrice,
+                    storeName: data.storeName,
+                    email: data.email,
+                    address: data.address,
+                    status: data.status,
+                    paymentUid: '',
+                    orderUid: data.orderUid
+                };
+
+                console.log('Checkout data:', orderData);
+                requestPayment(orderData)
+            })
+            .catch(error => {
+                console.log(error);
+            })
     };
 
     const extractJsonFromString = (str: string): any[] => {
@@ -250,7 +233,13 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
                 if(script.includes('Complete')){
                     console.log("주문 마침")
                     await googleTTs("주문을 마치겠습니다.", ()=>{})
-                    console.log(extractJsonFromString(script))
+                    const resultJSON = extractJsonFromString(script)
+                    console.log(resultJSON)
+                    let totalPrice=0
+                    for(let i=0; i<resultJSON.length; i++){
+                        totalPrice = totalPrice + resultJSON[i].price;
+                    }
+                    handleCheckout(totalPrice)
                     orderComplete = true;
                     break;
                 }
@@ -261,6 +250,172 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
             console.error("캐치 에러 오류:", error);
         }
     };
+
+    async function googleTTs(script: string, callback: () => void) {
+        try{
+            const gcpData = {
+                input: {text: script},
+                voice: {
+                    languageCode: 'ko-KR',
+                    ssmlGender: 'NEUTRAL',
+                },
+                audioConfig: {
+                    audioEncoding: 'LINEAR16',
+                },
+            };
+            const response = await fetch(gcpUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(gcpData),
+            });
+            const result = await response.json();
+            const audioContent = result.audioContent;
+            const audio = new Audio(`data:audio/wav;base64,${audioContent}`);
+            return new Promise((resolve) => {
+                audio.onended = () => {
+                    callback(); // 오디오 재생이 끝난 후 콜백 함수 실행
+                    resolve(true);
+                };
+                audio.play();
+            });
+        }
+        catch(error) {
+            return false;
+        }
+    }
+
+
+    async function getMenuItems() {
+        try{
+            const response = await axios.get(`${API_URL}/api/menus/menuNameandPrice`)
+            const menuList: MenuList[] = response.data
+            let categoryText = '';
+            for (const menuItem of menuList) {
+                categoryText = categoryText + menuItem.name + ': ' + menuItem.price + '\n';
+            }
+
+            return categoryText;
+        }
+        catch (error) {
+            console.error('메뉴 불러오기 실패', error);
+            return '';
+        }
+    }
+
+    const navigate = useNavigate();
+    const location = useLocation();
+    const state = location.state as LocationState || {};
+    const { orderData, selectedProducts: initialSelectedProducts } = state || {};
+    const [selectedProducts, setSelectedProducts] = useState<Product[]>(initialSelectedProducts || []);
+    const [order, setOrder] = useState<any>(null);
+    const authContext = useContext(AuthContext);
+    const [capturedImage, setCapturedImage] = useState<string | null>(null);
+
+    const webcamRef = useRef<Webcam>(null);
+    const capture = useCallback(() => {
+        if (webcamRef.current) {
+            const imageSrc = webcamRef.current.getScreenshot();
+            setCapturedImage(imageSrc);
+        }
+    }, [webcamRef]);
+
+    const humanRekognitionAndUpload = () => {
+        capture();
+    };
+
+    async function requestPayment(orderData:OrderModuleDTO) {
+        // @ts-ignore
+        const response = await PortOne.requestPayment(
+            {
+                // Store ID 설정
+                storeId: "store-ad45873a-cce5-4928-88c9-2343b0fe3a2a",
+                // 채널 키 설정
+                channelKey: "channel-key-a8a93b55-8642-4a34-b2a5-a9e39771d2dd",
+                paymentId: orderData.orderUid,  // 주문 번호
+                orderName: orderData.storeName, // 상품 이름
+                totalAmount: orderData.price,   // 상품 가격
+                currency: "CURRENCY_KRW",
+                payMethod: "CARD"
+            }
+        );
+        // @ts-ignore
+        if (response.code != null) {    // 오류 발생
+            // @ts-ignore
+            return console.error(response.message);
+        }
+        console.log('결제 성공:');
+        await axios.post(`${API_URL}/api/orders/iamPortDto`, {
+            price: orderData.price,
+            paymentUid: orderData.orderUid, // 결제 고유번호
+            orderUid: orderData.orderUid // 주문번호
+        });
+        try {
+            await axios.post(`${API_URL}/api/orders/createOrderRequest`, {
+                storeId: authContext?.storeInfo?.id,
+                kioskId: authContext?.kioskInfo?.id,
+                productId: selectedProducts.map(p => p.id).join(","),
+                orderId: orderData.orderUid,
+                payload: orderData.orderUid
+            });
+            // 결제 성공 시 주문 생성
+            const orderDTO = {
+                customerId: authContext?.customerInfo?.id || 1,
+                kioskId: authContext?.kioskInfo?.id,
+                datetime: new Date(),
+                totalPrice: orderData.price,
+                packaged: true,// 포장 여부 설정
+                paymentUid: orderData.orderUid
+            };
+
+            //const response = await axios.post(`${API_URL}/api/orders`, orderDTO);
+            // 새로고침한 뒤에 문제 생김 (해결)
+            const response = await axios.post(`${API_URL}/api/orders`, orderDTO, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            //response가 order임
+            if(response.status==201){
+                setOrder(response.data);
+            }
+            else if(response.status==401){
+                await axios.post(`${API_URL}/api/orders`, orderDTO, {
+                    headers: {
+                        'RefreshToken': `Bearer ${localStorage.getItem('refreshToken')}`
+                    }
+                });
+            }
+
+            await humanRekognitionAndUpload();
+
+            const orderItemDTOList = selectedProducts.map(product => {
+                return {
+                    paymentUid: orderDTO.paymentUid,
+                    menuId: product.id,
+                    // customOptions: product.options,
+                    quantity: product.quantity,
+                    price: product.price
+                }
+            });
+
+            for (let i = 0; i < orderItemDTOList.length; i++) {
+                await axios.post(`${API_URL}/api/orderitems`, orderItemDTOList[i]);
+            }
+
+            // alert('결제 완료!');
+            setSelectedProducts([]);
+            // navigate('/guard');
+
+            let orderid = response.data.id;
+            navigate(`/order-number/${orderid}`)
+
+        } catch (error) {
+            console.error('주문 생성 실패:', error);
+            // alert('주문 생성 실패!');
+        }
+    }
 
     return (
         <></>
