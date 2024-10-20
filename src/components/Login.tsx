@@ -99,8 +99,8 @@ const Login: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
             />
             <Button onClick={handleLogin}>로그인</Button>
-            <SignUpLink to="/sign_up">계정이 없으신가요? 회원가입</SignUpLink>
-            <SignUpLink to="/sign_upc">계정이 없으신가요? 회원가입2</SignUpLink>
+            {/*<SignUpLink to="/sign_up">계정이 없으신가요? 회원가입</SignUpLink>*/}
+            <SignUpLink to="/sign_upc">계정이 없으신가요? 회원가입</SignUpLink>
         </LoginContainer>
     );
 };

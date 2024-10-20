@@ -158,8 +158,6 @@ const SelectedItems: React.FC<SelectedItemsProps> = ({
                     다음
                 </PaginationButton>
             </PaginationWrapper>
-
-            <button onClick={onClear}>전체삭제</button>
         </SelectedItemsWrapper>
     );
 };
