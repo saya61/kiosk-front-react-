@@ -22,6 +22,17 @@ interface LocationState {
     selectedProducts: Product[];
 }
 
+declare global {
+    interface Window {
+        SpeechRecognition: any;
+        webkitSpeechRecognition: any;
+    }
+}
+interface SpeechRecognitionEvent extends Event {
+    readonly resultIndex: number;
+    readonly results: SpeechRecognitionResultList;
+}
+
 // 환경 변수를 설정하는 방법 카톡에 있음 확인 바람
 const apiKey = '';
 const gcpApiKey = ''
@@ -80,7 +91,6 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
                 }
             };
 
-            //@ts-ignore
             recognition.onerror = (event) => {
                 console.error('Recognition error:', event.error);
                 recognition.stop();
@@ -380,10 +390,10 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
                 }
             });
             //response가 order임
-            if(response.status==201){
+            if(response.status===201){
                 setOrder(response.data);
             }
-            else if(response.status==401){
+            else if(response.status===401){
                 await axios.post(`${API_URL}/api/orders`, orderDTO, {
                     headers: {
                         'RefreshToken': `Bearer ${localStorage.getItem('refreshToken')}`
