@@ -12,8 +12,8 @@ const GuardImgManagement: React.FC = ()=>{
     const [imgs, setImgs] = useState<Image[]>([]);
     const [file, setFile] = useState<File | null>(null);
     const [desiredFileName, setDesiredFileName] = useState('');
-    const [imageWidth, setImageWidth] = useState(200); // 기본값 예시
-    const [imageHeight, setImageHeight] = useState(200); // 기본값 예시
+    const [imageWidth, setImageWidth] = useState(1080); // 기본값 예시
+    const [imageHeight, setImageHeight] = useState(1920); // 기본값 예시
     // 모달 상태
     const [showAddModal, setShowAddModal] = useState(false);
 
@@ -164,7 +164,7 @@ const GuardImgManagement: React.FC = ()=>{
                 <tbody>
                 {imgs.map((img, index) => (
                     <tr key={index}>
-                        <td><img src={img.url} alt={"None"}/></td>
+                        <td><img src={img.url} alt={"None"}  style={{ width: '200px', height: 'auto' }} /></td>
                         <td>{img.name}</td>
                         <td>
                             <button onClick={() => deleteImg(img.url)}>삭제</button>
