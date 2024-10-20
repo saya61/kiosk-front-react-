@@ -97,7 +97,7 @@ const KioskSelectionPage: React.FC = () => {
                     </KioskItem>
                 ))}
             </KioskList>
-            <OrderWithGpt/>
+            {/*<OrderWithGpt/>*/}
         </Container>
     );
 };
