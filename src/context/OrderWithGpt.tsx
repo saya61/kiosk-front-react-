@@ -37,7 +37,6 @@ interface SpeechRecognitionEvent extends Event {
 const apiKey = '';
 const gcpApiKey = ''
 
-
 // GCP TTS
 const gcpUrl = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gcpApiKey}`;
 // GPT API
@@ -53,6 +52,7 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
     const [isListening, setIsListening] = useState<boolean>(false);
     const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
+    //@ts-ignore
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = 'ko-KR'; // 한국어 설정
     recognition.interimResults = false; // 중간 결과를 반환하지 않음
@@ -76,6 +76,7 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
 
             setTimeoutId(id);
 
+            //@ts-ignore
             recognition.onresult = (event: SpeechRecognitionEvent) => {
                 const result = event.results[0][0].transcript;
                 setTranscript(result);
@@ -90,7 +91,7 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
                 }
             };
 
-            recognition.onerror = (event : any) => {
+            recognition.onerror = (event) => {
                 console.error('Recognition error:', event.error);
                 recognition.stop();
                 reject(new Error('음성 인식 오류가 발생했습니다: ' + event.error)); // 오류 시 reject

@@ -5,7 +5,6 @@ import axios from "axios";
 import './GuardPage.css';
 import './Webfont.css'
 import BackgroundImageComponent from './BackgroundImageComponent';
-import OrderWithGpt from "../context/OrderWithGpt";
 
 interface Image {
     url: string;
@@ -56,7 +55,7 @@ const GuardPage: React.FC = () => {
             const interval = setInterval(()=> {
                 setImg(imgs[index]);
                 index = (index + 1) % imgs.length;
-            }, 3000)
+            }, 3000)    // 3초
             // 타이머를 정리하는 함수
             return () => clearInterval(interval);
         }
@@ -94,5 +93,6 @@ const GuardPage: React.FC = () => {
         </div>
     );
 };
+
 
 export default GuardPage;

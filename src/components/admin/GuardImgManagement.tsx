@@ -99,6 +99,7 @@ const GuardImgManagement: React.FC = ()=>{
         }
     };
 
+    // 이미지 지우기
     const deleteImg = (url: string) => {
         if (!window.confirm("정말로 삭제하시겠습니까?")) {
             return;
