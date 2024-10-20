@@ -10,7 +10,6 @@ interface Image {
     url: string;
 }
 
-
 const GuardPage: React.FC = () => {
     const navigate = useNavigate();
     const authContext = useContext(AuthContext);
@@ -56,7 +55,7 @@ const GuardPage: React.FC = () => {
             const interval = setInterval(()=> {
                 setImg(imgs[index]);
                 index = (index + 1) % imgs.length;
-            }, 3000)
+            }, 3000)    // 3초
             // 타이머를 정리하는 함수
             return () => clearInterval(interval);
         }
