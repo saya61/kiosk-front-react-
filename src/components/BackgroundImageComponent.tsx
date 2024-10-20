@@ -11,7 +11,7 @@ const BackgroundImageComponent: React.FC<BackgroundImageComponentProps> = ({ ima
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         width: '80vw',
-        height: '80vh',
+        height: '90vh',
     };
 
     return <div style={backgroundStyle}></div>;
