@@ -4,6 +4,7 @@ interface BackgroundImageComponentProps {
     imagePath: string;
 }
 
+
 const BackgroundImageComponent: React.FC<BackgroundImageComponentProps> = ({ imagePath }) => {
     const backgroundStyle: React.CSSProperties = {
         backgroundImage: `url(${imagePath})`,
