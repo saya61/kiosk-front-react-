@@ -37,6 +37,7 @@
     "react-scripts": "5.0.1",
     "react-select": "^5.8.0",
     "react-simple-keyboard": "^3.7.132",
+    "react-speech-recognition": "^3.10.0",
     "react-webcam": "^7.2.0",
     "stream-browserify": "^3.0.0",
     "styled-components": "^6.1.11",
