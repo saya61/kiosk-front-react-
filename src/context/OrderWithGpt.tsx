@@ -91,7 +91,7 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
                 }
             };
 
-            recognition.onerror = (event) => {
+            recognition.onerror = (event : any) => {
                 console.error('Recognition error:', event.error);
                 recognition.stop();
                 reject(new Error('음성 인식 오류가 발생했습니다: ' + event.error)); // 오류 시 reject
