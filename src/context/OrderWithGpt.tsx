@@ -26,6 +26,7 @@ interface LocationState {
 const apiKey = '';
 const gcpApiKey = ''
 
+
 // GCP TTS
 const gcpUrl = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gcpApiKey}`;
 // GPT API
