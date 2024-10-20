@@ -5,11 +5,11 @@ import axios from "axios";
 import './GuardPage.css';
 import './Webfont.css'
 import BackgroundImageComponent from './BackgroundImageComponent';
-import OrderWithGpt from "../context/OrderWithGpt";
 
 interface Image {
     url: string;
 }
+
 
 const GuardPage: React.FC = () => {
     const navigate = useNavigate();
@@ -94,5 +94,6 @@ const GuardPage: React.FC = () => {
         </div>
     );
 };
+
 
 export default GuardPage;
