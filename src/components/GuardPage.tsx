@@ -10,6 +10,7 @@ interface Image {
     url: string;
 }
 
+
 const GuardPage: React.FC = () => {
     const navigate = useNavigate();
     const authContext = useContext(AuthContext);
@@ -93,5 +94,6 @@ const GuardPage: React.FC = () => {
         </div>
     );
 };
+
 
 export default GuardPage;
