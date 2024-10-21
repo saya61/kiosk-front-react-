@@ -7,7 +7,6 @@ import styled from 'styled-components';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ProductListWrapper = styled.div<{ age: number | null }>`
-   
     display: grid;
     grid-template-columns: repeat(4, 1fr); // 4열 그리드
     grid-template-rows: repeat(2, 1fr);   // 4행 그리드

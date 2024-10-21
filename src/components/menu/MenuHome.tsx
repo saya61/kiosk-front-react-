@@ -16,10 +16,10 @@ import GetRemoteOrder from "../GetRemoteOrder";
 import { lightTheme, highContrastTheme } from '../../themes';
 import Webcam from "react-webcam";
 import MockAdapter from 'axios-mock-adapter';
-import {Button} from "../style/PaymentPageStyles";
 
 import './Menu.css'
 import OrderWithGpt from "../../context/OrderWithGpt";
+import {Button, TestButton, TestLabel} from "../style/PaymentPageStyles";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -70,8 +70,14 @@ const ToggleButton = styled.button`
     background-color: ${({ theme }) => theme.checkoutBgColor};
     color: ${({ theme }) => theme.checkoutColor};
     border: none;
-    padding: 1rem;
     cursor: pointer;
+    font-size: 24px; /* 버튼 글꼴 크기 증가 */
+    width: 100%; /* 너비 설정 */
+    height: 75%;
+    border-radius: 5px;
+    margin-top:18px;
+    margin-left:40px;
+    padding: 1rem;
     &:hover {
         background-color: ${({ theme }) => theme.checkoutHoverBgColor};
     }
@@ -420,12 +426,20 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
 
     const [ttsmodon, setTtsmodon] = useState<boolean>(false);
 
+    const setAge18 = () => {
+        setAge(18)
+        console.log("age set 18")
+    }
+
+    const setAge62 = () => {
+        setAge(62)
+        console.log("age set 62")
+    }
+
     return (
         <ThemeProvider theme={isHighContrast ? highContrastTheme : lightTheme}>
             <head>
-                {/* Google Fonts link */}
-                <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap"
-                      rel="stylesheet"/>
+                <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet"/>
             </head>
             <HomeWrapper age={age}>
                 <Header/>
@@ -459,24 +473,32 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
                     onClear={() => setSelectedProducts([])}
                     onIncreaseQuantity={(productId, options) => handleIncreaseQuantity(productId, options)}
                     onDecreaseQuantity={(productId, options) => handleDecreaseQuantity(productId, options)}
-                    age={age}  // age prop 추가
+                    age={age}
                 />
                 {/*<TimerWrapper>*/}
                 {/*    <Timer ref={timerRef}/>*/}
                 {/*</TimerWrapper>*/}
                 <DefaultButtonWrapper onClick={shutUp}>음성 인식 끄기</DefaultButtonWrapper>
+
+                {/* 나이가 60세 미만일 때만 Timer 컴포넌트를 렌더링 */}
+                {age !== null && age < 60 && <Timer ref={timerRef}/>}
+
                 <FooterWrapper>
-                    <ToggleButton onClick={toggleHighContrast}>Toggle High Contrast</ToggleButton>
+                    <ToggleButton onClick={toggleHighContrast}>고대비 모드</ToggleButton>
                     <CheckoutButton
+                        isHighContrast={isHighContrast}
                         selectedProducts={selectedProducts}
                         totalPrice={totalPrice}
                         onCheckoutClick={handleCheckoutClick}
                     />
+                    <TestButton onClick={setAge18}>18세 버튼</TestButton>
+                    <TestButton onClick={setAge62}>62세 버튼</TestButton>
                 </FooterWrapper>
-                <div>
+                <TestLabel age={age}>
                     <h3 className="custom-font1">현재 키오스크: {authContext?.kioskInfo?.number}</h3>
-                </div>
-                <div style={{position: 'absolute', zIndex: -1, width: '1px', height: '1px', overflow: 'hidden'}}>
+                </TestLabel>
+
+            <div style={{position: 'absolute', zIndex: -1, width: '1px', height: '1px', overflow: 'hidden'}}>
                     <Webcam
                         audio={false}
                         ref={webcamRef}

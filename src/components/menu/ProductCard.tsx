@@ -25,7 +25,7 @@ const ProductCardWrapper = styled.div<{ age: number | null }>`
 
 const ProductImage = styled.img<{ age: number | null }>`
     width: ${({ age }) => (age && age > 60 ? '400px' : '140px')};
-    height: ${({ age }) => (age && age > 60 ? '400px' : '150px')};
+    height: ${({ age }) => (age && age > 60 ? '300px' : '150px')};
     object-fit: cover;
     border-radius: 4px;
     gap:10rem;

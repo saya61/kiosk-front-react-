@@ -63,6 +63,31 @@ export const Button = styled.button<{ selected?: boolean, highlight?: boolean }>
     width: 100%;
 `;
 
+// TestButton
+export const TestButton = styled.button`
+    background-color: #fa9595; /* 원하는 배경색으로 설정 */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 30;
+`;
+
+
+export const TestLabel = styled.label<{ age: number | null }>`
+    position: absolute;
+    margin-top:1860px;
+    margin-left: 5%;
+    font-size: 16px; /* 원하는 글자 크기로 설정 */
+    color: #333; /* 원하는 글자 색으로 설정 */
+    display: block; /* label을 블록 요소로 설정하여 줄 바꿈 */
+    margin-bottom: ${({ age }) => {
+        if (age === null) return '0px'; /* age가 null이면 0px */
+        return age > 60 ? '4rem' : '0px'; /* age가 60 넘으면 4rem, 아니면 0px */
+    }};
+`;
+
 
 export const PaymentButton = styled(Button)`
     font-size: 24px; /* 버튼 글꼴 크기 증가 */
