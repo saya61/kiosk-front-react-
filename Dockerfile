@@ -6,7 +6,7 @@ WORKDIR /app
 
 # 필요한 파일 복사 및 의존성 설치
 COPY package*.json ./
-RUN npm install
+RUN npm install --force
 
 # 'serve'를 글로벌로 설치
 RUN npm install -g serve
