@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import axios from "axios";
 import './GuardPage.css';
 import './Webfont.css'
+import BackgroundImageComponent from './BackgroundImageComponent';
 
 interface Image {
     url: string;
@@ -14,28 +15,35 @@ const GuardPage: React.FC = () => {
     const authContext = useContext(AuthContext);
     const [imgs, setImgs] = useState<Image[]>([]);
     const [img, setImg] = useState<Image>();
+    const storedImgs = localStorage.getItem('imgs');
+    const imgList = storedImgs ? JSON.parse(storedImgs) : [];
 
     const API_URL = process.env.REACT_APP_API_URL;
 
+    const fetchImg = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/admin/img/guardImgs`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log('Response data:', response.data);
+            const imgList: Image[] = response.data.map((url: string) => ({url}));
+            localStorage.setItem('imgs', JSON.stringify(imgList));
+            console.log(localStorage.getItem('imgs'));
+            // setImgs(imgList);
+            console.log('Fetched images:', imgList);
+        } catch (error) {
+            console.error('Failed to fetch image', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchImg = async () => {
-            try {
-                const response = await axios.get(`${API_URL}/api/guardImgs`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                console.log('Response data:', response.data);
-                const imgList: Image[] = response.data.map((url: string) => ({url}));
-                setImgs(imgList);
-                console.log('Fetched images:', imgList);
-            } catch (error) {
-                console.error('Failed to fetch image', error);
-            }
-        };
-
+        setImgs(imgList);
         fetchImg();
+    }, []);
 
+    useEffect(() => {
         // GuardPage로 돌아갈 때 usePointSwitch 초기화
         authContext?.setUsePointSwitch(false);
     }, [authContext]);
@@ -47,7 +55,7 @@ const GuardPage: React.FC = () => {
             const interval = setInterval(()=> {
                 setImg(imgs[index]);
                 index = (index + 1) % imgs.length;
-            }, 3000)
+            }, 3000)    // 3초
             // 타이머를 정리하는 함수
             return () => clearInterval(interval);
         }
@@ -61,22 +69,30 @@ const GuardPage: React.FC = () => {
         <div className="kiosk-main">
             {img? (
                 // 이미지가 있을 때
-                <div>
-                    <img src={img?.url} onClick={() => handleNavigation('/menu')} alt={"이미지 로딩 실패"}/>
-                </div>
+                    <div>
+                        <div className="button-container">
+                            <BackgroundImageComponent imagePath={img.url}/>
+                            <button onClick={() => handleNavigation('/menu')} className="kiosk-button">
+                                주문하기
+                            </button>
+                            {/*<button onClick={() => handleNavigation('/menu')} className="kiosk-button"><OrderWithGpt/></button>*/}
+                        </div>
+                    </div>
             ) : (
                 // 이미지가 없을 때
                 <div>
-                    <h1 className="custom-font">Welcome to Easy KIOSK</h1>
+                <h1 className="custom-font">Welcome to Easy KIOSK</h1>
                     <div className="button-container">
                         <button onClick={() => handleNavigation('/menu')} className="kiosk-button">
                             주문하기
                         </button>
+                        {/*<button onClick={() => handleNavigation('/menu')} className="kiosk-button"><OrderWithGpt/></button>*/}
                     </div>
                 </div>
             )}
         </div>
     );
 };
+
 
 export default GuardPage;
