@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -11,7 +11,7 @@ import PaymentPage from './components/PaymentPage';
 import KioskSelectionPage from './components/KioskSelectionPage';
 import GuardPage from './components/GuardPage';
 import OrderCompleteCheck from "./components/admin/OrderCompleteCheck";
-import OrderNumber from "./components/OrderNumber"
+import OrderNumber from "./components/OrderNumber";
 import SirenHomePage from "./components/siren/SirenHomePage";
 import SirenLoginPage from "./components/siren/SirenLoginPage";
 import SirenRegisterPage from "./components/siren/SirenRegisterPage";
@@ -19,20 +19,29 @@ import SirenLocationSelectionPage from "./components/siren/SirenLocationSelectio
 import StoreSelectionPage from "./components/StoreSelectionPage";
 import OnBoardingHome from "./components/onboarding/OnBoardingHome";
 
-
 const App: React.FC = () => {
     const [isHighContrast, setIsHighContrast] = useState(false);
+
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            localStorage.clear();
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
 
     return (
         <AuthProvider>
             <ThemeProvider theme={isHighContrast ? highContrastTheme : lightTheme}>
                 <Routes>
-                    <Route path="/" element={<OnBoardingHome />}/>
-
+                    <Route path="/" element={<OnBoardingHome />} />
                     <Route path="/users/login" element={<Login />} />
                     <Route path="/sign_up" element={<SignUp />} />
                     <Route path="/sign_upc" element={<SignUpC />} />
-                    {/*<Route path="/kiosk-selection" element={<KioskSelectionPage />} />*/}
                     <Route path="/kiosks/:id" element={<KioskSelectionPage />} />
                     <Route path="/store-selection" element={<StoreSelectionPage />} />
                     <Route path="/menu" element={<MenuHome isHighContrast={isHighContrast} setIsHighContrast={setIsHighContrast} />} />
@@ -42,10 +51,11 @@ const App: React.FC = () => {
                     <Route path="/order-number/:id" element={<OrderNumber />} />
 
                     <Route path="*" element={<Navigate to="/users/login" />} />
-                {/*    사이렌 페이지 라우트*/}
-                    <Route path="/siren" element={<SirenHomePage />}/>
-                    <Route path="/siren/location" element={<SirenLocationSelectionPage/>}/>
-                    <Route path="/siren/login" element={<SirenLoginPage/>} />
+
+                    {/* 사이렌 페이지 라우트 */}
+                    <Route path="/siren" element={<SirenHomePage />} />
+                    <Route path="/siren/location" element={<SirenLocationSelectionPage />} />
+                    <Route path="/siren/login" element={<SirenLoginPage />} />
                     <Route path="/siren/register" element={<SirenRegisterPage />} />
                 </Routes>
             </ThemeProvider>
