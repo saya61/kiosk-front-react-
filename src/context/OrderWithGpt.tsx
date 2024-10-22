@@ -34,8 +34,8 @@ interface SpeechRecognitionEvent extends Event {
 }
 
 // 환경 변수를 설정하는 방법 카톡에 있음 확인 바람
-const apiKey = '';
-const gcpApiKey = ''
+const apiKey = process.env.REACT_APP_API_KEY;
+const gcpApiKey = process.env.REACT_APP_GCP_API_KEY;
 
 // GCP TTS
 const gcpUrl = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gcpApiKey}`;
@@ -72,7 +72,7 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
                 recognition.stop();
                 setIsListening(false);
                 reject(new Error('음성 인식 시간이 초과되었습니다.')); // 시간 초과 시 reject
-            }, 10000); // 10초 후에 꺼짐
+            }, 100000); // 100초 후에 꺼짐
 
             setTimeoutId(id);
 
