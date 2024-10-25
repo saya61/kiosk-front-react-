@@ -443,7 +443,6 @@ const MenuHome: React.FC<{ isHighContrast: boolean, setIsHighContrast: React.Dis
             </head>
             <HomeWrapper age={age}>
                 <Header/>
-                <GetRemoteOrder/>
                 <Category
                     categories={categories.filter(category => category.visible)}
                     onCategoryClick={handleCategoryClick}

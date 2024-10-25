@@ -39,8 +39,9 @@ const GuardPage: React.FC = () => {
     };
 
     useEffect(() => {
-        setImgs(imgList);
         fetchImg();
+        setImgs(imgList);
+
     }, []);
 
     useEffect(() => {

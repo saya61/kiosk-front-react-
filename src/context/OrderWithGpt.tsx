@@ -72,7 +72,7 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
                 recognition.stop();
                 setIsListening(false);
                 reject(new Error('음성 인식 시간이 초과되었습니다.')); // 시간 초과 시 reject
-            }, 100000); // 100초 후에 꺼짐
+            }, 10000); // 10초 후에 꺼짐
 
             setTimeoutId(id);
 
@@ -115,7 +115,7 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
             setTimeoutId(null);
         }
     };
-    
+
     // 결제 초기값 생성
     // @ts-ignore
     const handleCheckout = (totalPrice:number) => {
