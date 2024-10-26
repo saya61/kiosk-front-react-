@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-frontend-config
+data:
+  REACT_APP_API_KEY: {{ .Values.env.REACT_APP_API_KEY | quote }}
+  REACT_APP_GCP_API_KEY: {{ .Values.env.REACT_APP_GCP_API_KEY | quote }}
+  REACT_APP_GOOGLE_MAPS_API_KEY: {{ .Values.env.REACT_APP_GOOGLE_MAPS_API_KEY | quote }}
+  REACT_APP_API_URL: {{ .Values.env.REACT_APP_API_URL | quote }}

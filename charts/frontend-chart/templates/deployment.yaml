@@ -19,10 +19,6 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
             - containerPort: 3000
-          env:
-            - name: REACT_APP_API_KEY
-              value: "{{ .Values.env.REACT_APP_API_KEY }}"
-            - name: REACT_APP_GCP_API_KEY
-              value: "{{ .Values.env.REACT_APP_GCP_API_KEY }}"
-            - name: REACT_APP_GOOGLE_MAPS_API_KEY
-              value: "{{ .Values.env.REACT_APP_GOOGLE_MAPS_API_KEY }}"
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-frontend-config
