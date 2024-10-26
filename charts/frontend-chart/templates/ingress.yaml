@@ -4,7 +4,10 @@ metadata:
   name: {{ .Release.Name }}-frontend-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+  labels:
+    app: {{ .Release.Name }}
 spec:
+  ingressClassName: nginx
   rules:
     - host: www.aikiosk.shop
       http:
@@ -19,4 +22,4 @@ spec:
   tls:
     - hosts:
         - www.aikiosk.shop
-      secretName: api-aikiosk-shop-tls
+      secretName: aikiosk-tls
