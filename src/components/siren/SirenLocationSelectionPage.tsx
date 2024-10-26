@@ -128,7 +128,7 @@ const SirenLocationSelectionPage: React.FC = () => {
     const sendLocationToServer = async (locationData: { location: string; latitude: number; longitude: number }) => {
         try {
             console.log(userId)
-            const response = await axios.post('http://localhost:8080/api/siren-user/location/renew', {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/siren-user/location/renew`, {
                 id: userId, // 전달받은 유저 ID 사용
                 address: locationData.location,
                 latitude: locationData.latitude,

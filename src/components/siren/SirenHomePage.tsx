@@ -68,14 +68,14 @@ const SirenHomePage: React.FC = () => {
         }
 
         // API에서 스토어 데이터 가져오기
-        axios.get('http://localhost:8080/api/kk/store/all')
+        axios.get(`${process.env.REACT_APP_API_URL}/api/kk/store/all`)
             .then(response => setStores(response.data))
             .catch(error => console.error('Error fetching stores:', error));
     }, []);
 
     const fetchUser = async (userId: string) => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/kk/siren/user/${userId}`);
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/kk/siren/user/${userId}`);
             if (response.status === 200) {
                 setUserName(response.data.name); // 사용자 이름 상태 업데이트
                 setUserId(response.data.id); // 이거 왜되는거임?

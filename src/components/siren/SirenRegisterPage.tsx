@@ -14,7 +14,7 @@ const SirenRegisterPage: React.FC = () => {
     const handleRegister = async () => {
         try {
             // 서버로 회원가입 요청을 보냅니다.
-            await axios.post('http://localhost:8080/api/kk/siren/user/register', {
+            await axios.post(`${process.env.REACT_APP_API_URL}/api/kk/siren/user/register`, {
                 name: username,
                 password: password,
                 phoneNumber: `010-${phoneNumber}`
