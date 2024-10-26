@@ -20,12 +20,9 @@ spec:
           ports:
             - containerPort: 3000
           env:
-            - name: REACT_APP_GOOGLE_MAPS_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: google-maps-api-key
-                  key: REACT_APP_GOOGLE_MAPS_API_KEY
             - name: REACT_APP_API_KEY
-              value: "{{ .Values.env.apiKey }}"
+              value: "{{ .Values.env.REACT_APP_API_KEY }}"
             - name: REACT_APP_GCP_API_KEY
-              value: "{{ .Values.env.gcpApiKey }}"
+              value: "{{ .Values.env.REACT_APP_GCP_API_KEY }}"
+            - name: REACT_APP_GOOGLE_MAPS_API_KEY
+              value: "{{ .Values.env.REACT_APP_GOOGLE_MAPS_API_KEY }}"

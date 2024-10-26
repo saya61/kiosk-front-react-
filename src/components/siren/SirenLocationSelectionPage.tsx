@@ -167,7 +167,7 @@ const SirenLocationSelectionPage: React.FC = () => {
 
     return (
         <div>
-            <LoadScript googleMapsApiKey={API_URL || ""}>
+            <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ""}>
                 <GoogleMap
                     mapContainerStyle={containerStyle}
                     center={center}

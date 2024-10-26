@@ -34,8 +34,8 @@ interface SpeechRecognitionEvent extends Event {
 }
 
 // 환경 변수를 설정하는 방법 카톡에 있음 확인 바람
-const apiKey = '';
-const gcpApiKey = ''
+const apiKey = process.env.REACT_APP_API_KEY;
+const gcpApiKey = process.env.REACT_APP_GCP_API_KEY;
 
 // GCP TTS
 const gcpUrl = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gcpApiKey}`;
