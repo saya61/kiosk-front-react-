@@ -2,11 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-frontend-ingress
-  namespace: default
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   rules:
     - host: www.aikiosk.shop
@@ -19,8 +16,7 @@ spec:
                 name: {{ .Release.Name }}-frontend
                 port:
                   number: 3000
-
   tls:
     - hosts:
         - www.aikiosk.shop
-      secretName: aikiosk-tls
+      secretName: api-aikiosk-shop-tls
