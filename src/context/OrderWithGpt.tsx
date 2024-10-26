@@ -115,7 +115,7 @@ const OrderWithGpt: React.FC<VoiceInputProps> = ({onTranscription }) => {
             setTimeoutId(null);
         }
     };
-    
+
     // 결제 초기값 생성
     // @ts-ignore
     const handleCheckout = (totalPrice:number) => {
